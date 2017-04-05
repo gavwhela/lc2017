@@ -1,4 +1,5 @@
-<ul>
-  $forall Entity key val <- posts
-    <li>
-      <a href=@{PostR key}> #{postTitle val}
+<div .container>
+  <ul>
+    $forall Entity key val <- posts
+      <li>
+        <a href=@{PostR key}> #{postTitle val}

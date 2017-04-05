@@ -1,4 +1,11 @@
-<h1> #{postTitle post}
-<h2> #{postAuthor post}
-<h2> #{show $ postCreated post}
-<p> #{postBody post}
+<div .container>
+  <h1> #{postTitle post}
+  <h2> #{postAuthor post}
+  <h2> #{show $ postCreated post}
+  <p> #{postBody post}
+  <form role=form method=post action=@{PostR postId} enctype=#{enctype}>
+    ^{formWidget}
+    <button>Post
+  <ul>
+    $forall Entity _ comment <- comments
+      <li> #{commentMessage comment}

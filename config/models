@@ -8,9 +8,10 @@ Email
     userId UserId Maybe
     verkey Text Maybe
     UniqueEmail email
-Comment json -- Adding "json" causes ToJSON and FromJSON instances to be derived.
+Comment
     message Text
     userId UserId Maybe
+    postId PostId
     deriving Eq
     deriving Show
 Post
