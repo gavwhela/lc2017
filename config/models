@@ -13,5 +13,10 @@ Comment json -- Adding "json" causes ToJSON and FromJSON instances to be derived
     userId UserId Maybe
     deriving Eq
     deriving Show
+Post
+    title Text
+    author Text
+    created UTCTime
+    body Text
 
  -- By default this file is used in Model.hs (which is imported by Foundation.hs)

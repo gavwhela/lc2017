@@ -1,0 +1,4 @@
+<ul>
+  $forall Entity key val <- posts
+    <li>
+      <a href=@{PostR key}> #{postTitle val}

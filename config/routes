@@ -5,5 +5,6 @@
 /robots.txt RobotsR GET
 
 / HomeR GET
-
+!/posts/#PostId PostR GET
+!/posts/new NewPostR GET POST
 /profile ProfileR GET

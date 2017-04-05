@@ -1,0 +1,4 @@
+<h1> #{postTitle post}
+<h2> #{postAuthor post}
+<h2> #{show $ postCreated post}
+<p> #{postBody post}
