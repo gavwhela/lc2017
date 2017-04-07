@@ -2,16 +2,21 @@ module Handler.Posts where
 
 import Import
 
+-- Handler for an individual post
 getPostR :: PostId -> Handler Html
 getPostR postId = do
   muser <- maybeAuthId
+  -- Get post content
   post <- runDB $ get404 postId
+  -- Select comments for this post
   comments <- runDB $ selectList [ CommentPostId ==. postId ] []
+  -- Generate a form for creating new comments
   (formWidget, enctype) <- generateFormPost $ newCommentForm muser postId
   defaultLayout $ do
         setTitle . toHtml $ postTitle post
         $(widgetFile "post")
 
+-- Handler for page to create new posts
 getNewPostR :: Handler Html
 getNewPostR = do
   time <- liftIO getCurrentTime
@@ -33,6 +38,7 @@ postNewPostR = do
                setTitle "New Post"
                $(widgetFile "new-post")
 
+-- Posting to an individual post is used to create comments
 postPostR :: PostId -> Handler Html
 postPostR postId = do
   muser <- maybeAuthId
@@ -48,6 +54,7 @@ postPostR postId = do
                setTitle . toHtml $ postTitle post
                $(widgetFile "post")
 
+-- Form to create a new post
 newPostForm :: UTCTime -> Form Post
 newPostForm currentTime = renderDivs $ Post
   <$> areq textField "Title" Nothing
@@ -55,6 +62,7 @@ newPostForm currentTime = renderDivs $ Post
   <*> pure currentTime
   <*> areq textField "Body" Nothing
 
+-- Form to create a new comment
 newCommentForm :: Maybe UserId -> PostId -> Form Comment
 newCommentForm muser postId = renderDivs $ Comment
   <$> areq textField "Message" Nothing
