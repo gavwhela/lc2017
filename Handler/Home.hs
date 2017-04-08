@@ -5,7 +5,7 @@ import Import
 getHomeR :: Handler Html
 getHomeR = do
   -- Fetch list of posts for homepage
-  posts <- runDB $ selectList [] []
+  posts <- runDB $ selectList [] [Desc PostId]
   defaultLayout $ do
         setTitle "Blog!"
         $(widgetFile "homepage")
