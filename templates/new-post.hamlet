@@ -1,5 +1,4 @@
-<div .container>
-  <h1>New Post
-  <form role=form method=post action=@{NewPostR} enctype=#{enctype}>
-    ^{formWidget}
-    <button>Submit
+<h1>New Post
+<form role=form method=post action=@{NewPostR} enctype=#{enctype}>
+  ^{formWidget}
+  <button>Submit

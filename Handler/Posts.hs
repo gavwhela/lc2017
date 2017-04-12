@@ -8,6 +8,8 @@ getPostR postId = do
   muser <- maybeAuthId
   -- Get post content
   post <- runDB $ get404 postId
+  -- Formatted date
+  let date = formatDate $ postCreated post
   -- Select comments for this post
   comments <- runDB $ selectList [ CommentPostId ==. postId ] []
   -- Generate a form for creating new comments
@@ -15,6 +17,10 @@ getPostR postId = do
   defaultLayout $ do
         setTitle . toHtml $ postTitle post
         $(widgetFile "post")
+
+formatDate :: UTCTime -> String
+formatDate = formatTime defaultTimeLocale dateFormat
+    where dateFormat = "%a, %B %e, %0Y"
 
 -- Handler for page to create new posts
 getNewPostR :: Handler Html
@@ -43,6 +49,8 @@ postPostR :: PostId -> Handler Html
 postPostR postId = do
   muser <- maybeAuthId
   post <- runDB $ get404 postId
+  -- Formatted date
+  let date = formatDate $ postCreated post
   comments <- runDB $ selectList [ CommentPostId ==. postId ] []
   ((res, formWidget), enctype) <- runFormPost $ newCommentForm muser postId
   case res of

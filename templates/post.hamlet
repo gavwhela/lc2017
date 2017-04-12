@@ -1,12 +1,11 @@
-<div .container>
-  <header .post-header>
-    <h1 .post-title> #{postTitle post}
-    <p> By: #{postAuthor post}
-    <p> Created: #{show $ postCreated post}
-  <p> #{postBody post}
-  <form role=form method=post action=@{PostR postId} enctype=#{enctype}>
-    ^{formWidget}
-    <button>Post
-  <ul>
-    $forall Entity _ comment <- comments
-      <li> #{commentMessage comment}
+<header .post-header>
+  <h1 .post-title> #{postTitle post}
+  <p> #{postAuthor post}
+  <p> #{date}
+<p> #{postBody post}
+<form role=form method=post action=@{PostR postId} enctype=#{enctype}>
+  ^{formWidget}
+  <button>Post
+<ul>
+  $forall Entity _ comment <- comments
+    <li> #{commentMessage comment}
