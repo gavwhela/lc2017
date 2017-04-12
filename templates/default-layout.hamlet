@@ -1,22 +1,22 @@
+<div #wrapper>
+  <header .site-header>
+    <!-- Static navbar -->
+    <nav .container>
+      <ul .nav>
+        $forall MenuItem label route _ <- navbarFilteredMenuItems
+          <li .nav-item>
+            <a href="@{route}">#{label}
 
-<header .site-header>
-  <!-- Static navbar -->
-  <nav .container>
-    <ul .nav>
-      $forall MenuItem label route _ <- navbarFilteredMenuItems
-        <li .nav-item>
-          <a href="@{route}">#{label}
+  <!-- Page Contents -->
 
-<!-- Page Contents -->
+  <div .container>
+      $maybe msg <- mmsg
+        <div .alert.alert-info #message>#{msg}
 
-<div .container>
-    $maybe msg <- mmsg
-      <div .alert.alert-info #message>#{msg}
-
-^{widget}
+  ^{widget}
 
 <!-- Footer -->
 <footer .footer>
     <div .container>
-        <p .text-muted>
+        <p>
             #{appCopyright $ appSettings master}

@@ -1,8 +1,17 @@
-.body {
+html, body {
+    height: 100%;
+}
+body {
     color: #494949;
+    margin: 0px;
 }
 a {
     text-decoration: none;
+}
+#wrapper {
+    height: auto;
+    min-height: 100%;
+    margin-bottom: -200px;
 }
 .container {
     margin: 0 auto;
@@ -60,4 +69,11 @@ a {
 }
 .nav-item a {
     color: #57bb54;
+}
+.footer {
+    margin-top: 45px;
+    color: #cccccc;
+    background: #153015;
+    height: 200px;
+    text-align: center;
 }
