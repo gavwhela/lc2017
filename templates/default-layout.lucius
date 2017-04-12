@@ -1,73 +1,63 @@
-.masthead,
-.navbar {
-    background-color: rgb(27, 28, 29);
+.body {
+    color: #494949;
 }
-
-.navbar-default .navbar-nav > .active > a {
-    background-color: transparent;
-    border-bottom: 2px solid white;
+a {
+    text-decoration: none;
 }
-
-.navbar-nav {
-    padding-bottom: 1em;
-}
-
-.masthead {
-    margin-top: -21px;
-    color: white;
-    text-align: center;
-    min-height: 500px;
-}
-
-.masthead .header {
-    max-width: 700px;
+.container {
     margin: 0 auto;
-    font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+    position: relative;
+    width: 100%;
+    max-width: 900px;
 }
-
-.masthead h1.header {
-    margin-top: 1em;
-    margin-bottom: 0em;
-    font-size: 4.5em;
-    line-height: 1.2em;
-    font-weight: normal;
- }
-
-.masthead h2 {
-    font-size: 1.7em;
-    font-weight: normal;
+.site-header {
+    text-align: center;
+    text-transform: uppercase;
 }
-
-.masthead .btn {
-    margin: 1em 0;
+.post-header {
+    text-align: center;
+    text-transform: uppercase;
 }
-
-
-/* Common styles for all types */
-.bs-callout {
-  padding: 20px;
-  margin: 20px 0;
-  border: 1px solid #eee;
-  border-left-width: 5px;
-  border-radius: 3px;
+.post-title {
+    font-size: 50px;
+    font-weight: 650;
+    margin: 16px 0;
 }
-
-.bs-callout p:last-child {
-  margin-bottom: 0;
+.post-list {
+    list-style: none;
+    padding: 0;
+    line-height: 1.4;
+    margin: 0 0 20px;
 }
-
-.bs-callout-info {
-  border-left-color: #1b809e;
+.short-post {
+    border-bottom: 1px dotted #303030;
+    margin: 0;
+    position: relative;
 }
-
-/* Space things out */
-.bs-docs-section {
-  margin-bottom: 60px;
+.short-post a {
+    -webkit-transition: all .2s ease-in-out;
+    -moz-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+    display: block;
+    padding: 20px 5px;
+    color: #494949;
 }
-.bs-docs-section:last-child {
-  margin-bottom: 0;
+.short-post a:hover {
+    background: #f8fcf8;
+    color: #57bb54;
+    padding: 20px 12px;
 }
-
-#message {
-    margin-bottom: 40px;
+.nav {
+    list-style: none;
+    margin: 28px 0px 10px;
+    padding: 0;
+}
+.nav-item {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 650;
+    margin: 0px 10px;
+}
+.nav-item a {
+    color: #57bb54;
 }

@@ -1,5 +1,5 @@
 <div .container>
-  <ul>
+  <ol .post-list>
     $forall Entity key val <- posts
-      <li>
+      <li .short-post>
         <a href=@{PostR key}> #{postTitle val}

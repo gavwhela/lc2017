@@ -1,7 +1,8 @@
 <div .container>
-  <h1> #{postTitle post}
-  <h2> #{postAuthor post}
-  <h2> #{show $ postCreated post}
+  <header .post-header>
+    <h1 .post-title> #{postTitle post}
+    <p> By: #{postAuthor post}
+    <p> Created: #{show $ postCreated post}
   <p> #{postBody post}
   <form role=form method=post action=@{PostR postId} enctype=#{enctype}>
     ^{formWidget}
