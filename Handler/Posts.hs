@@ -13,7 +13,7 @@ getPostR postId = do
   -- Select comments for this post
   comments <- runDB $ selectList [ CommentPostId ==. postId ] []
   -- Generate a form for creating new comments
-  (formWidget, enctype) <- generateFormPost $ newCommentForm muser postId
+  mform <- traverse (generateFormPost . newCommentForm postId) muser
   defaultLayout $ do
         setTitle . toHtml $ postTitle post
         $(widgetFile "post")
@@ -47,19 +47,20 @@ postNewPostR = do
 -- Posting to an individual post is used to create comments
 postPostR :: PostId -> Handler Html
 postPostR postId = do
-  muser <- maybeAuthId
+  user <- requireAuthId
   post <- runDB $ get404 postId
   -- Formatted date
   let date = formatDate $ postCreated post
   comments <- runDB $ selectList [ CommentPostId ==. postId ] []
-  ((res, formWidget), enctype) <- runFormPost $ newCommentForm muser postId
+  ((res, formWidget), enctype) <- runFormPost $ newCommentForm postId user
   case res of
     FormSuccess entry -> do
-        runDB $ insert entry
+        runDB $ insert_ entry
         setMessage "Successfully created comment"
         redirect (PostR postId)
     _ -> defaultLayout $ do
                setTitle . toHtml $ postTitle post
+               let mform = Just (formWidget, enctype)
                $(widgetFile "post")
 
 -- Form to create a new post
@@ -71,8 +72,8 @@ newPostForm currentTime = renderDivs $ Post
   <*> areq textField "Body" Nothing
 
 -- Form to create a new comment
-newCommentForm :: Maybe UserId -> PostId -> Form Comment
-newCommentForm muser postId = renderDivs $ Comment
-  <$> areq textField "Message" Nothing
-  <*> pure muser
+newCommentForm :: PostId -> UserId -> Form Comment
+newCommentForm postId user = renderDivs $ Comment
+  <$> areq textareaField "Message" Nothing
+  <*> pure user
   <*> pure postId

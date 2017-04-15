@@ -9,8 +9,8 @@ Email
     verkey Text Maybe
     UniqueEmail email
 Comment
-    message Text
-    userId UserId Maybe
+    message Textarea
+    userId UserId
     postId PostId
     deriving Eq
     deriving Show
