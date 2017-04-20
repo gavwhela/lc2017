@@ -5,10 +5,11 @@ import Database.Persist.Sql (ConnectionPool, runSqlPool)
 import Text.Hamlet          (hamletFile)
 import Text.Jasmine         (minifym)
 
+import Yesod.Auth.Message (AuthMessage(..))
+import Yesod.Auth.Account
 -- Used only when in "auth-dummy-login" setting is enabled.
 import Yesod.Auth.Dummy
 
-import Yesod.Auth.OpenId    (authOpenId, IdentifierType (Claimed))
 import Yesod.Default.Util   (addStaticContentExternal)
 import Yesod.Core.Types     (Logger)
 import qualified Yesod.Core.Unsafe as Unsafe
@@ -32,10 +33,6 @@ data MenuItem = MenuItem
     , menuItemRoute :: Route App
     , menuItemAccessCallback :: Bool
     }
-
-data MenuTypes
-    = NavbarLeft MenuItem
-    | NavbarRight MenuItem
 
 -- This is where we define all of the routes in our application. For a full
 -- explanation of the syntax, please see:
@@ -182,6 +179,17 @@ instance YesodPersist App where
 instance YesodPersistRunner App where
     getDBRunner = defaultGetDBRunner appConnPool
 
+instance PersistUserCredentials User where
+  userUsernameF = UserUsername
+  userPasswordHashF = UserPassword
+  userEmailF = UserEmailAddress
+  userEmailVerifiedF = UserVerified
+  userEmailVerifyKeyF = UserVerifyKey
+  userResetPwdKeyF = UserResetPasswordKey
+  uniqueUsername = UniqueUser
+
+  userCreate name email key pwd = User name pwd email False key ""
+
 instance YesodAuth App where
     type AuthId App = UserId
 
@@ -196,17 +204,19 @@ instance YesodAuth App where
         x <- getBy $ UniqueUser $ credsIdent creds
         case x of
             Just (Entity uid _) -> return $ Authenticated uid
-            Nothing -> Authenticated <$> insert User
-                { userIdent = credsIdent creds
-                , userPassword = Nothing
-                }
+            Nothing -> return $ UserError NoIdentifierProvided
 
     -- You can add other plugins like Google Email, email or OAuth here
-    authPlugins app = [authOpenId Claimed []] ++ extraAuthPlugins
+    authPlugins app = [accountPlugin] ++ extraAuthPlugins
         -- Enable authDummy login if enabled.
         where extraAuthPlugins = [authDummy | appAuthDummyLogin $ appSettings app]
 
-    authHttpManager = getHttpManager
+    authHttpManager = error "No manager needed"
+
+instance AccountSendEmail App
+
+instance YesodAuthAccount (AccountPersistDB App User) App where
+  runAccountDB = runAccountPersistDB
 
 -- | Access function to determine if a user is logged in.
 isAuthenticated :: Handler AuthResult

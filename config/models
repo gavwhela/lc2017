@@ -1,13 +1,12 @@
 User
-    ident Text
-    password Text Maybe
-    UniqueUser ident
+    username Text
+    UniqueUser username
+    password ByteString
+    emailAddress Text
+    verified Bool
+    verifyKey Text
+    resetPasswordKey Text
     deriving Typeable
-Email
-    email Text
-    userId UserId Maybe
-    verkey Text Maybe
-    UniqueEmail email
 Comment
     message Textarea
     userId UserId
