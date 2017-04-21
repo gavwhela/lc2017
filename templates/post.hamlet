@@ -1,6 +1,6 @@
 <header .post-header>
   <h1 .post-title> #{postTitle post}
-  <p> #{userUsername poster}
+  <p> <a href=@{ProfileR $ postAuthor post}>#{userDisplayName poster}</a>
   <p> #{date}
 <hr>
 $case postHTML
@@ -17,9 +17,9 @@ $case postHTML
     $if null comments
       <p> Be the first to comment!
     $else
-      $forall (E.Value message, E.Value name) <- comments
+      $forall (E.Value message, E.Value name, E.Value commenter) <- comments
         <div .comment>
           <div .comment-head>
-            <span> #{name}
+            <span> <a href=@{ProfileR commenter}>#{name}</a>
           <div .comment-body>
             <p> #{message}

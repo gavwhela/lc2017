@@ -14,7 +14,7 @@ getHomeR = do
                 E.on $ post ^. PostAuthor E.==. user ^. UserId
                 return ( post ^. PostId
                        , post ^. PostTitle
-                       , user ^. UserUsername )
+                       , user ^. UserDisplayName )
   blogName <- fmap (appBlogName . appSettings) getYesod
   defaultLayout $ do
         setTitle "Blog!"

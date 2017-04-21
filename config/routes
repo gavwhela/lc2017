@@ -7,4 +7,4 @@
 / HomeR GET
 !/posts/#PostId PostR GET POST DELETE
 !/posts/new NewPostR GET POST
-/profile ProfileR GET
+/profile/#UserId ProfileR GET

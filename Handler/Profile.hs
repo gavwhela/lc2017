@@ -4,11 +4,13 @@ import Import
 import Yesod.Auth.Account (resetPasswordR)
 import Yesod.Markdown
 
-getProfileR :: Handler Html
-getProfileR = do
-    (_, user) <- requireAuthPair
+getProfileR :: UserId -> Handler Html
+getProfileR userId = do
+    viewerId <- requireAuthId
+    user <- runDB $ get404 userId
+    let isOwner = viewerId == userId
     let bioHTML = markdownToHtml $ userBio user
     csrfToken <- fmap reqToken getRequest
     defaultLayout $ do
-        setTitle . toHtml $ userUsername user <> "'s User page"
+        setTitle . toHtml $ userDisplayName user <> "'s User page"
         $(widgetFile "profile")

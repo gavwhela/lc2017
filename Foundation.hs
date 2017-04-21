@@ -51,6 +51,9 @@ mkYesodData "App" $(parseRoutesFile "config/routes")
 -- | A convenient synonym for creating forms.
 type Form x = Html -> MForm (HandlerT App IO) (FormResult x, Widget)
 
+fromJust :: Maybe a -> a
+fromJust (Just a) = a
+
 -- Please see the documentation for the Yesod typeclass. There are a number
 -- of settings which can be configured by overriding methods here.
 instance Yesod App where
@@ -80,7 +83,7 @@ instance Yesod App where
         master <- getYesod
         mmsg <- getMessage
 
-        muser <- maybeAuthPair
+        muser <- maybeAuthId
         mcurrentRoute <- getCurrentRoute
 
         -- Define the menu items of the header.
@@ -92,7 +95,7 @@ instance Yesod App where
                     }
                 , MenuItem
                     { menuItemLabel = "Profile"
-                    , menuItemRoute = ProfileR
+                    , menuItemRoute = (ProfileR $ fromJust muser)
                     , menuItemAccessCallback = isJust muser
                     }
                 , MenuItem
@@ -136,7 +139,12 @@ instance Yesod App where
     isAuthorized RobotsR _ = return Authorized
     isAuthorized (StaticR _) _ = return Authorized
 
-    isAuthorized ProfileR _ = isAuthenticated
+    isAuthorized (ProfileR _) False = return Authorized
+    isAuthorized (ProfileR userId) True =
+        do muserId <- maybeAuthId
+           if maybe False ((==) userId) muserId
+              then return Authorized
+              else return $ Unauthorized "You do not own that resource"
 
     -- This function creates static content files in the static folder
     -- and names them based on a hash of their content. This allows

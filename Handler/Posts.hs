@@ -71,9 +71,11 @@ deletePostR postId = do
   redirect HomeR
 
 -- Esqueleto query to fetch comments for a given post ID
-getComments :: Key Post -> ReaderT SqlBackend Handler [(E.Value Textarea, E.Value Text)]
+getComments :: Key Post -> ReaderT SqlBackend Handler [( E.Value Textarea
+                                                       , E.Value Text
+                                                       , E.Value UserId)]
 getComments postId = E.select $
-     -- Join comments and users to get usernames
+     -- Join comments and users to get display names
      E.from $ \(comment `E.InnerJoin` user) -> do
         -- Only posts for this post ID
         E.where_ ( comment ^. CommentPostId E.==. E.val postId )
@@ -81,9 +83,10 @@ getComments postId = E.select $
         E.orderBy [E.desc $ comment ^. CommentId]
         -- Join users to comments when the ids match
         E.on $ comment ^. CommentUserId E.==. user ^. UserId
-        -- Only project out the needed fields, username and comment message
+        -- Only project out the needed fields, display name and comment message
         return ( comment ^. CommentMessage
-               , user ^. UserUsername )
+               , user ^. UserDisplayName
+               , user ^. UserId)
 
 -- Format a UTCTime into a human readable date
 formatDate :: UTCTime -> String

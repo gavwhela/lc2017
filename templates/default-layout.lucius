@@ -33,6 +33,12 @@ a {
     text-align: center;
     text-transform: uppercase;
 }
+.post-header a {
+    color: #494949;
+}
+.post-header a:hover {
+    text-decoration: underline;
+}
 .post-title {
     font-size: 50px;
     font-weight: 650;
@@ -87,6 +93,12 @@ a {
 }
 .comment-head {
     color: #cccccc;
+}
+.comment-head a {
+    color: #cccccc;
+}
+.comment-head a:hover {
+    text-decoration: underline;
 }
 .comment-body p {
     margin-top: 0px;
