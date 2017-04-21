@@ -1,6 +1,8 @@
 module Handler.Posts where
 
 import Import
+import qualified Database.Esqueleto as E
+import           Database.Esqueleto ((^.))
 
 -- Handler for an individual post
 getPostR :: PostId -> Handler Html
@@ -11,7 +13,7 @@ getPostR postId = do
   -- Formatted date
   let date = formatDate $ postCreated post
   -- Select comments for this post
-  comments <- runDB $ selectList [ CommentPostId ==. postId ] []
+  comments <- runDB (getComments postId)
   -- Generate a form for creating new comments
   mform <- traverse (generateFormPost . newCommentForm postId) muser
   defaultLayout $ do
@@ -44,6 +46,13 @@ postNewPostR = do
                setTitle "New Post"
                $(widgetFile "new-post")
 
+getComments postId = E.select $
+     E.from $ \(comment `E.InnerJoin` user) -> do
+        E.where_ ( comment ^. CommentPostId E.==. E.val postId )
+        E.on $ comment ^. CommentUserId E.==. user ^. UserId
+        return ( comment ^. CommentMessage
+               , user ^. UserUsername )
+
 -- Posting to an individual post is used to create comments
 postPostR :: PostId -> Handler Html
 postPostR postId = do
@@ -51,7 +60,7 @@ postPostR postId = do
   post <- runDB $ get404 postId
   -- Formatted date
   let date = formatDate $ postCreated post
-  comments <- runDB $ selectList [ CommentPostId ==. postId ] []
+  comments <- runDB (getComments postId)
   ((res, formWidget), enctype) <- runFormPost $ newCommentForm postId user
   case res of
     FormSuccess entry -> do

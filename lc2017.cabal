@@ -87,6 +87,7 @@ library
                  , wai-logger                    >= 2.2        && < 2.4
                  , yesod-auth-account
                  , file-embed
+                 , esqueleto
                  , safe
                  , unordered-containers
                  , containers

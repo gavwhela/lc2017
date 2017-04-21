@@ -8,12 +8,13 @@
     <form role=form method=post action=@{PostR postId} enctype=#{enctype}>
       ^{formWidget}
       <button>Post
-  $if null comments
-    <p> Nothing here
-  $else
-    $forall Entity _ comment <- comments
-      <div .comment>
-        <div .comment-head>
-          <span> Name here
-        <div .comment-body>
-          <p> #{commentMessage comment}
+  <div .comment-list>
+    $if null comments
+      <p> Nothing here
+    $else
+      $forall (E.Value message, E.Value name) <- comments
+        <div .comment>
+          <div .comment-head>
+            <span> #{name}
+          <div .comment-body>
+            <p> #{message}

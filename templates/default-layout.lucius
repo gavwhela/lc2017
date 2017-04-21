@@ -77,3 +77,13 @@ a {
     height: 200px;
     text-align: center;
 }
+.post-comments, .comment-list {
+    margin-top: 20px;
+}
+.comment-head {
+    color: #cccccc;
+}
+.comment-body p {
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
