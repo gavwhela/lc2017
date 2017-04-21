@@ -3,7 +3,11 @@
   <p> #{userUsername poster}
   <p> #{date}
 <hr>
-<p> #{postBody post}
+$case postHTML
+  $of Left err
+    <p> #{show err}
+  $of Right html
+    <p> ^{html}
 <div .post-comments>
   $maybe (formWidget, enctype) <- mform
     <form role=form method=post action=@{PostR postId} enctype=#{enctype}>

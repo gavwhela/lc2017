@@ -3,6 +3,7 @@ module Handler.Posts where
 import Import
 import qualified Database.Esqueleto as E
 import           Database.Esqueleto ((^.))
+import Yesod.Markdown
 
 -- Handler for an individual post
 getPostR :: PostId -> Handler Html
@@ -16,6 +17,8 @@ getPostR postId = do
   let date = formatDate $ postCreated post
   -- Select comments for this post
   comments <- runDB (getComments postId)
+  -- Generate HTML for markdown post
+  let postHTML = markdownToHtml $ postBody post
   -- Generate a form for creating new comments
   mform <- traverse (generateFormPost . newCommentForm postId) muser
   defaultLayout $ do
@@ -66,6 +69,8 @@ postPostR postId = do
   poster <- runDB $ get404 $ postAuthor post
   -- Formatted date
   let date = formatDate $ postCreated post
+  -- Generate HTML for markdown post
+  let postHTML = markdownToHtml $ postBody post
   comments <- runDB (getComments postId)
   ((res, formWidget), enctype) <- runFormPost $ newCommentForm postId user
   case res of
@@ -79,12 +84,46 @@ postPostR postId = do
                $(widgetFile "post")
 
 -- Form to create a new post
-newPostForm :: UserId -> UTCTime -> Form Post
-newPostForm user currentTime = renderDivs $ Post
-  <$> areq textField "Title" Nothing
-  <*> pure user
-  <*> pure currentTime
-  <*> areq textField "Body" Nothing
+newPostForm :: UserId -> UTCTime -> Html -> MForm Handler (FormResult Post, Widget)
+newPostForm user currentTime extra = do
+  (titleRes, titleView) <- mreq textField titleFieldSettings Nothing
+  (bodyRes, bodyView) <- mreq markdownField bodyFieldSettings Nothing
+  let postRes = Post <$> titleRes <*> pure user <*> pure currentTime <*> bodyRes
+  let widget = do
+        toWidget
+            [lucius|
+               ##{fvId titleView} {
+                   width: 100%;
+                   margin-bottom: 10px;
+               }
+               ##{fvId bodyView} {
+                   width: 100%;
+                   resize: none;
+                   border-radius: 3px;
+               }
+            |]
+        [whamlet|
+            #{extra}
+            ^{fvInput titleView}
+            ^{fvInput bodyView}
+        |]
+  return (postRes, widget)
+    where
+      bodyFieldSettings =
+          FieldSettings { fsLabel = "Unused"
+                        , fsTooltip = Nothing
+                        , fsId = Nothing
+                        , fsName = Nothing
+                        , fsAttrs = [ ("placeholder", "Body")
+                                    , ("class", "autoexpand")
+                                    , ("rows", "3")
+                                    , ("data-min-rows", "3") ] }
+      titleFieldSettings =
+          FieldSettings { fsLabel = "Unused"
+                        , fsTooltip = Nothing
+                        , fsId = Nothing
+                        , fsName = Nothing
+                        , fsAttrs = [ ("placeholder", "Title") ] }
 
 -- Form to create a new comment
 newCommentForm :: PostId -> UserId -> Html -> MForm Handler (FormResult Comment, Widget)

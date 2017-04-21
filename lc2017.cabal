@@ -86,6 +86,7 @@ library
                  , fast-logger                   >= 2.2        && < 2.5
                  , wai-logger                    >= 2.2        && < 2.4
                  , yesod-auth-account
+                 , yesod-markdown
                  , file-embed
                  , esqueleto
                  , safe
