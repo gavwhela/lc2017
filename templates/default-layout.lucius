@@ -12,7 +12,12 @@ a {
 #wrapper {
     height: auto;
     min-height: 100%;
-    margin-bottom: -200px;
+    margin-bottom: -220px;
+}
+#wrapper:after {
+    content: "";
+    display: block;
+    height: 200px;
 }
 .container {
     margin: 0 auto;
@@ -59,8 +64,8 @@ a {
 }
 .nav {
     list-style: none;
-    margin: 28px 0px 10px;
-    padding: 0;
+    margin: 0px 0px 10px 0px;
+    padding: 28px 0px 0px 0px;
 }
 .nav-item {
     display: inline-block;
@@ -72,7 +77,6 @@ a {
     color: #57bb54;
 }
 .footer {
-    margin-top: 45px;
     color: #cccccc;
     background: #153015;
     height: 200px;
