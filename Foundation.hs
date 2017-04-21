@@ -226,6 +226,18 @@ isAuthenticated = do
         Nothing -> Unauthorized "You must login to access this page"
         Just _ -> Authorized
 
+-- | Check if the current user owns a db resource
+ownsResource :: ( PersistEntity a
+                , PersistStore (PersistEntityBackend a)
+                , PersistEntityBackend a ~ YesodPersistBackend App) =>
+                Key a -> (a -> (AuthId App)) -> HandlerT App IO AuthResult
+ownsResource resourceId fromResource = do
+  uid <- requireAuthId
+  resource <- runDB $ get404 resourceId
+  if fromResource resource == uid
+    then return Authorized
+    else return $ Unauthorized "You do not own that resource"
+
 instance YesodAuthPersist App
 
 -- This instance is required to use forms. You can modify renderMessage to

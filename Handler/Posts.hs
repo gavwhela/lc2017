@@ -52,6 +52,24 @@ postPostR postId = do
                let mform = Just (formWidget, enctype)
                $(widgetFile "post")
 
+-- Delete a post
+deletePostR :: PostId -> Handler Html
+deletePostR postId = do
+  -- User ID required to delete post
+  userId <- requireAuthId
+  -- Get post content or 404 if doesn't exist
+  post <- runDB $ get404 postId
+  -- Return 403 if user does not own post
+  unless (userId == postAuthor post) (permissionDenied "You do not own that post")
+  -- Actually delete post and comments on post
+  runDB $ do
+    deleteWhere [CommentPostId ==. postId]
+    delete postId
+  -- Set success message in session
+  setMessage "Deleted Post"
+  -- Redirect to post list
+  redirect HomeR
+
 -- Esqueleto query to fetch comments for a given post ID
 getComments :: Key Post -> ReaderT SqlBackend Handler [(E.Value Textarea, E.Value Text)]
 getComments postId = E.select $
