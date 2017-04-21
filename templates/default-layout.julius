@@ -1,0 +1,11 @@
+// autoexpand textareas with autoexpand class
+$(document)
+  .one('focus.autoexpand', 'textarea.autoexpand', function(){
+    this.lastScrollHeight = this.scrollHeight;
+  })
+  .on('input.autoexpand', 'textarea.autoexpand', function(){
+    if(this.scrollHeight > this.lastScrollHeight) {
+      $(this).css('height', Math.min(this.scrollHeight, 200)+"px");
+      this.lastScrollHeight = this.scrollHeight;
+    }
+  });

@@ -53,6 +53,7 @@ postNewPostR = do
 getComments postId = E.select $
      E.from $ \(comment `E.InnerJoin` user) -> do
         E.where_ ( comment ^. CommentPostId E.==. E.val postId )
+        E.orderBy [E.desc $ comment ^. CommentId]
         E.on $ comment ^. CommentUserId E.==. user ^. UserId
         return ( comment ^. CommentMessage
                , user ^. UserUsername )
@@ -86,8 +87,31 @@ newPostForm user currentTime = renderDivs $ Post
   <*> areq textField "Body" Nothing
 
 -- Form to create a new comment
-newCommentForm :: PostId -> UserId -> Form Comment
-newCommentForm postId user = renderDivs $ Comment
-  <$> areq textareaField "Message" Nothing
-  <*> pure user
-  <*> pure postId
+newCommentForm :: PostId -> UserId -> Html -> MForm Handler (FormResult Comment, Widget)
+newCommentForm postId user extra = do
+  (messageRes, messageView) <- mreq textareaField messageFieldSettings Nothing
+  let commentRes = Comment <$> messageRes <*> pure user <*> pure postId
+  let widget = do
+        toWidget
+            [lucius|
+               ##{fvId messageView} {
+                   width: 100%;
+                   resize: none;
+                   border-radius: 3px;
+               }
+            |]
+        [whamlet|
+            #{extra}
+            ^{fvInput messageView}
+        |]
+  return (commentRes, widget)
+    where
+      messageFieldSettings =
+          FieldSettings { fsLabel = "Unused"
+                        , fsTooltip = Nothing
+                        , fsId = Nothing
+                        , fsName = Nothing
+                        , fsAttrs = [ ("placeholder", "Comment...")
+                                    , ("class", "autoexpand")
+                                    , ("rows", "3")
+                                    , ("data-min-rows", "3") ] }

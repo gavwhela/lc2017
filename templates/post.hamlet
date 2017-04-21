@@ -2,6 +2,7 @@
   <h1 .post-title> #{postTitle post}
   <p> #{userUsername poster}
   <p> #{date}
+<hr>
 <p> #{postBody post}
 <div .post-comments>
   $maybe (formWidget, enctype) <- mform
@@ -10,7 +11,7 @@
       <button>Post
   <div .comment-list>
     $if null comments
-      <p> Nothing here
+      <p> Be the first to comment!
     $else
       $forall (E.Value message, E.Value name) <- comments
         <div .comment>

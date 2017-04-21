@@ -4,6 +4,7 @@ html, body {
 body {
     color: #494949;
     margin: 0px;
+    font-size: 16px;
 }
 a {
     text-decoration: none;
@@ -90,4 +91,8 @@ a {
 .short-post-title {
     display: inline-block;
     margin: 0;
+}
+p {
+    line-height: 1.6;
+    margint: 0 0 20px;
 }
