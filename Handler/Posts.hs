@@ -9,7 +9,7 @@ import Yesod.Markdown
 getPostR :: PostId -> Handler Html
 getPostR postId = do
   muser <- maybeAuthId
-  -- Get post content
+  -- Get post content or 404 if doesn't exist
   post <- runDB $ get404 postId
   -- Get the poster
   poster <- runDB $ get404 $ postAuthor post
@@ -25,6 +25,49 @@ getPostR postId = do
         setTitle . toHtml $ postTitle post
         $(widgetFile "post")
 
+-- Posting to an individual post is used to create comments
+postPostR :: PostId -> Handler Html
+postPostR postId = do
+  -- User ID required to post a comment.
+  user <- requireAuthId
+  -- Get post content or 404 if doesn't exist
+  post <- runDB $ get404 postId
+  -- Get the poster
+  poster <- runDB $ get404 $ postAuthor post
+  -- Formatted date
+  let date = formatDate $ postCreated post
+  -- Select comments for this post
+  comments <- runDB (getComments postId)
+  -- Generate HTML for markdown post
+  let postHTML = markdownToHtml $ postBody post
+  -- Generate a form for creating new comments
+  ((res, formWidget), enctype) <- runFormPost $ newCommentForm postId user
+  case res of
+    FormSuccess entry -> do
+        runDB $ insert_ entry
+        setMessage "Successfully created comment"
+        redirect (PostR postId)
+    _ -> defaultLayout $ do
+               setTitle . toHtml $ postTitle post
+               let mform = Just (formWidget, enctype)
+               $(widgetFile "post")
+
+-- Esqueleto query to fetch comments for a given post ID
+getComments :: Key Post -> ReaderT SqlBackend Handler [(E.Value Textarea, E.Value Text)]
+getComments postId = E.select $
+     -- Join comments and users to get usernames
+     E.from $ \(comment `E.InnerJoin` user) -> do
+        -- Only posts for this post ID
+        E.where_ ( comment ^. CommentPostId E.==. E.val postId )
+        -- Order newest first
+        E.orderBy [E.desc $ comment ^. CommentId]
+        -- Join users to comments when the ids match
+        E.on $ comment ^. CommentUserId E.==. user ^. UserId
+        -- Only project out the needed fields, username and comment message
+        return ( comment ^. CommentMessage
+               , user ^. UserUsername )
+
+-- Format a UTCTime into a human readable date
 formatDate :: UTCTime -> String
 formatDate = formatTime defaultTimeLocale dateFormat
     where dateFormat = "%a, %B %e, %0Y"
@@ -32,6 +75,7 @@ formatDate = formatTime defaultTimeLocale dateFormat
 -- Handler for page to create new posts
 getNewPostR :: Handler Html
 getNewPostR = do
+  -- User ID required to create posts
   user <- requireAuthId
   time <- liftIO getCurrentTime
   (formWidget, enctype) <- generateFormPost $ newPostForm user time
@@ -41,6 +85,7 @@ getNewPostR = do
 
 postNewPostR :: Handler Html
 postNewPostR = do
+  -- User ID required to create posts
   user <- requireAuthId
   time <- liftIO getCurrentTime
   ((res, formWidget), enctype) <- runFormPost $ newPostForm user time
@@ -52,36 +97,6 @@ postNewPostR = do
     _ -> defaultLayout $ do
                setTitle "New Post"
                $(widgetFile "new-post")
-
-getComments postId = E.select $
-     E.from $ \(comment `E.InnerJoin` user) -> do
-        E.where_ ( comment ^. CommentPostId E.==. E.val postId )
-        E.orderBy [E.desc $ comment ^. CommentId]
-        E.on $ comment ^. CommentUserId E.==. user ^. UserId
-        return ( comment ^. CommentMessage
-               , user ^. UserUsername )
-
--- Posting to an individual post is used to create comments
-postPostR :: PostId -> Handler Html
-postPostR postId = do
-  user <- requireAuthId
-  post <- runDB $ get404 postId
-  poster <- runDB $ get404 $ postAuthor post
-  -- Formatted date
-  let date = formatDate $ postCreated post
-  -- Generate HTML for markdown post
-  let postHTML = markdownToHtml $ postBody post
-  comments <- runDB (getComments postId)
-  ((res, formWidget), enctype) <- runFormPost $ newCommentForm postId user
-  case res of
-    FormSuccess entry -> do
-        runDB $ insert_ entry
-        setMessage "Successfully created comment"
-        redirect (PostR postId)
-    _ -> defaultLayout $ do
-               setTitle . toHtml $ postTitle post
-               let mform = Just (formWidget, enctype)
-               $(widgetFile "post")
 
 -- Form to create a new post
 newPostForm :: UserId -> UTCTime -> Html -> MForm Handler (FormResult Post, Widget)
