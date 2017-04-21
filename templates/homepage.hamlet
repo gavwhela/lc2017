@@ -1,3 +1,7 @@
+<header .post-header>
+  <h1 .post-title> #{blogName}
+<hr>
+
 <ol .post-list>
   $if null posts
     <p> Nothing here

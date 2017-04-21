@@ -15,6 +15,7 @@ getHomeR = do
                 return ( post ^. PostId
                        , post ^. PostTitle
                        , user ^. UserUsername )
+  blogName <- fmap (appBlogName . appSettings) getYesod
   defaultLayout $ do
         setTitle "Blog!"
         $(widgetFile "homepage")

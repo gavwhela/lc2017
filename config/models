@@ -3,6 +3,8 @@ User
     UniqueUser username
     password ByteString
     emailAddress Text
+    displayName Text
+    bio Markdown
     verified Bool
     verifyKey Text
     resetPasswordKey Text

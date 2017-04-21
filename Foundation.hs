@@ -188,7 +188,7 @@ instance PersistUserCredentials User where
   userResetPwdKeyF = UserResetPasswordKey
   uniqueUsername = UniqueUser
 
-  userCreate name email key pwd = User name pwd email False key ""
+  userCreate name email key pwd = User name pwd email name "" False key ""
 
 instance YesodAuth App where
     type AuthId App = UserId

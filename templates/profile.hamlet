@@ -1,4 +1,10 @@
-<h1> Settings
+<h1> #{userDisplayName user}
+
+$case bioHTML
+  $of Left err
+    <p> #{show err}
+  $of Right html
+    <p> ^{html}
 
 <p> Send a verification email to reset password
 <form method=post enctype="application/x-www-form-urlencoded" action=@{AuthR resetPasswordR}>
