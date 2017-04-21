@@ -87,3 +87,7 @@ a {
     margin-top: 0px;
     margin-bottom: 10px;
 }
+.short-post-title {
+    display: inline-block;
+    margin: 0;
+}

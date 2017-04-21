@@ -15,7 +15,7 @@ Comment
     deriving Show
 Post
     title Text
-    author Text
+    author UserId
     created UTCTime
     body Text
 

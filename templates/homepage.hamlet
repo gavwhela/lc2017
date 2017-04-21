@@ -2,6 +2,8 @@
   $if null posts
     <p> Nothing here
   $else
-    $forall Entity key val <- posts
+    $forall (E.Value key, E.Value title, E.Value poster) <- posts
       <li .short-post>
-        <a href=@{PostR key}> #{postTitle val}
+        <a href=@{PostR key}>
+          <h4 .short-post-title>#{title}
+          : By #{poster}

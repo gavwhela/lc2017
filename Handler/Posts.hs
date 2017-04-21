@@ -10,6 +10,8 @@ getPostR postId = do
   muser <- maybeAuthId
   -- Get post content
   post <- runDB $ get404 postId
+  -- Get the poster
+  poster <- runDB $ get404 $ postAuthor post
   -- Formatted date
   let date = formatDate $ postCreated post
   -- Select comments for this post
@@ -27,16 +29,18 @@ formatDate = formatTime defaultTimeLocale dateFormat
 -- Handler for page to create new posts
 getNewPostR :: Handler Html
 getNewPostR = do
+  user <- requireAuthId
   time <- liftIO getCurrentTime
-  (formWidget, enctype) <- generateFormPost $ newPostForm time
+  (formWidget, enctype) <- generateFormPost $ newPostForm user time
   defaultLayout $ do
         setTitle "New Post"
         $(widgetFile "new-post")
 
 postNewPostR :: Handler Html
 postNewPostR = do
+  user <- requireAuthId
   time <- liftIO getCurrentTime
-  ((res, formWidget), enctype) <- runFormPost $ newPostForm time
+  ((res, formWidget), enctype) <- runFormPost $ newPostForm user time
   case res of
     FormSuccess entry -> do
         runDB $ insert_ entry
@@ -58,6 +62,7 @@ postPostR :: PostId -> Handler Html
 postPostR postId = do
   user <- requireAuthId
   post <- runDB $ get404 postId
+  poster <- runDB $ get404 $ postAuthor post
   -- Formatted date
   let date = formatDate $ postCreated post
   comments <- runDB (getComments postId)
@@ -73,10 +78,10 @@ postPostR postId = do
                $(widgetFile "post")
 
 -- Form to create a new post
-newPostForm :: UTCTime -> Form Post
-newPostForm currentTime = renderDivs $ Post
+newPostForm :: UserId -> UTCTime -> Form Post
+newPostForm user currentTime = renderDivs $ Post
   <$> areq textField "Title" Nothing
-  <*> areq textField "Author" Nothing
+  <*> pure user
   <*> pure currentTime
   <*> areq textField "Body" Nothing
 
