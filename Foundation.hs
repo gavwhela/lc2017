@@ -142,11 +142,8 @@ instance Yesod App where
     isAuthorized (StaticR _) _ = return Authorized
 
     isAuthorized (ProfileR _) False = return Authorized
-    isAuthorized (ProfileR userId) True =
-        do muserId <- maybeAuthId
-           if maybe False ((==) userId) muserId
-              then return Authorized
-              else return $ Unauthorized "You do not own that resource"
+    isAuthorized (ProfileR uid) True = isUser uid
+    isAuthorized (EditProfileR uid) _ = isUser uid
 
     -- This function creates static content files in the static folder
     -- and names them based on a hash of their content. This allows
@@ -235,6 +232,14 @@ isAuthenticated = do
     return $ case muid of
         Nothing -> Unauthorized "You must login to access this page"
         Just _ -> Authorized
+
+isUser :: UserId -> Handler AuthResult
+isUser uid =
+    do muserId <- maybeAuthId
+       if maybe False ((==) uid) muserId
+         then return Authorized
+         else return $ Unauthorized "You do not own that resource"
+
 
 -- | Check if the current user owns a db resource
 ownsResource :: ( PersistEntity a

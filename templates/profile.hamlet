@@ -1,4 +1,6 @@
 <h1> #{userDisplayName user}
+$if isOwner
+  <a href=@{EditProfileR userId}>Edit
 
 $case bioHTML
   $of Left err
