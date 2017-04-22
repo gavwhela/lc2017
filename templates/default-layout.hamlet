@@ -11,7 +11,7 @@
 
   <div .container>
       $maybe msg <- mmsg
-        <div .alert.alert-info #message>#{msg}
+        <div #message>#{msg}
 
   <div .container>
     ^{widget}

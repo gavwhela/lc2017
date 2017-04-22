@@ -119,3 +119,9 @@ p {
 .delete-comment {
     color: #ff574d
 }
+#message {
+    text-align: center;
+    background: #ccffcc;
+    border: 1px solid #007700;
+    border-radius: 5px;
+}
