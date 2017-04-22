@@ -6,9 +6,9 @@ import Yesod.Markdown
 
 getProfileR :: UserId -> Handler Html
 getProfileR userId = do
-    viewerId <- requireAuthId
+    viewerId <- maybeAuthId
     user <- runDB $ get404 userId
-    let isOwner = viewerId == userId
+    let isOwner = maybe False ((==) userId) viewerId
     let bioHTML = markdownToHtml $ userBio user
     csrfToken <- fmap reqToken getRequest
     defaultLayout $ do

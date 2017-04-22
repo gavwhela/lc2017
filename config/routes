@@ -8,3 +8,4 @@
 !/posts/#PostId PostR GET POST DELETE
 !/posts/new NewPostR GET POST
 /profile/#UserId ProfileR GET
+/preview PreviewR POST

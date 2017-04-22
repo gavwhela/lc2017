@@ -2,3 +2,6 @@
 <form role=form method=post action=@{NewPostR} enctype=#{enctype}>
   ^{formWidget}
   <button>Submit
+<button ##{previewButton}>Preview
+<hr>
+<div ##{previewDiv}>

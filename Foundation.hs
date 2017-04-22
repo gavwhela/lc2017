@@ -134,6 +134,7 @@ instance Yesod App where
     isAuthorized HomeR _ = return Authorized
     isAuthorized (PostR _) False = return Authorized
     isAuthorized (PostR _) True = isAuthenticated
+    isAuthorized PreviewR _ = isAuthenticated
     isAuthorized NewPostR _ = isAuthenticated
     isAuthorized FaviconR _ = return Authorized
     isAuthorized RobotsR _ = return Authorized

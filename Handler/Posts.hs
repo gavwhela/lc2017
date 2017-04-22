@@ -4,6 +4,11 @@ import Import
 import qualified Database.Esqueleto as E
 import           Database.Esqueleto ((^.))
 import Yesod.Markdown
+import Data.Aeson
+import Data.Aeson.Types (Parser, parseMaybe)
+import Text.Blaze.Html.Renderer.Utf8 (renderHtml)
+import qualified Data.Text.Lazy.Encoding as LE (decodeUtf8)
+import Text.Julius (rawJS)
 
 -- Handler for an individual post
 getPostR :: PostId -> Handler Html
@@ -99,17 +104,46 @@ getNewPostR = do
   -- User ID required to create posts
   user <- requireAuthId
   time <- liftIO getCurrentTime
-  (formWidget, enctype) <- generateFormPost $ newPostForm user time
+  previewButton <- newIdent
+  previewDiv <- newIdent
+  bodyId <- newIdent
+  (formWidget, enctype) <- generateFormPost $ newPostForm user time bodyId
   defaultLayout $ do
         setTitle "New Post"
         $(widgetFile "new-post")
+
+parsePreview :: Value -> Parser Markdown
+parsePreview = withObject "preview" (\obj -> do
+                                       markdown <- obj .: "markdown"
+                                       return $ Markdown markdown)
+
+-- Handler takes JSON markdown and return JSON of the markdown rendered into HTML
+postPreviewR :: Handler Value
+postPreviewR = do
+  mMarkdown <- do rval <- parseCheckJsonBody
+                  case rval of
+                    Error _ -> return Nothing
+                    Success val -> return $ parseMaybe parsePreview val
+  let fail = return $ object [ "status" .= ("fail" :: Text) ]
+  case mMarkdown of
+    Nothing -> fail
+    Just markdown ->
+        do let mpreviewHtml = markdownToHtml markdown
+           case mpreviewHtml of
+             Left _ -> fail
+             Right previewHtml ->
+               return $ object [ "status" .= ("success" :: Text)
+                               , "html" .= (LE.decodeUtf8 $ renderHtml previewHtml)]
 
 postNewPostR :: Handler Html
 postNewPostR = do
   -- User ID required to create posts
   user <- requireAuthId
   time <- liftIO getCurrentTime
-  ((res, formWidget), enctype) <- runFormPost $ newPostForm user time
+  previewButton <- newIdent
+  previewDiv <- newIdent
+  bodyId <- newIdent
+  ((res, formWidget), enctype) <- runFormPost $ newPostForm user time bodyId
   case res of
     FormSuccess entry -> do
         runDB $ insert_ entry
@@ -120,8 +154,8 @@ postNewPostR = do
                $(widgetFile "new-post")
 
 -- Form to create a new post
-newPostForm :: UserId -> UTCTime -> Html -> MForm Handler (FormResult Post, Widget)
-newPostForm user currentTime extra = do
+newPostForm :: UserId -> UTCTime -> Text -> Html -> MForm Handler (FormResult Post, Widget)
+newPostForm user currentTime bodyId extra = do
   (titleRes, titleView) <- mreq textField titleFieldSettings Nothing
   (bodyRes, bodyView) <- mreq markdownField bodyFieldSettings Nothing
   let postRes = Post <$> titleRes <*> pure user <*> pure currentTime <*> bodyRes
@@ -148,10 +182,10 @@ newPostForm user currentTime extra = do
       bodyFieldSettings =
           FieldSettings { fsLabel = "Unused"
                         , fsTooltip = Nothing
-                        , fsId = Nothing
+                        , fsId = Just bodyId
                         , fsName = Nothing
                         , fsAttrs = [ ("placeholder", "Body")
-                                    , ("class", "autoexpand")
+                                    , ("class", "autoexpand autoexpand-big")
                                     , ("rows", "3")
                                     , ("data-min-rows", "3") ] }
       titleFieldSettings =
@@ -187,6 +221,6 @@ newCommentForm postId user extra = do
                         , fsId = Nothing
                         , fsName = Nothing
                         , fsAttrs = [ ("placeholder", "Comment...")
-                                    , ("class", "autoexpand")
+                                    , ("class", "autoexpand autoexpand-small")
                                     , ("rows", "3")
                                     , ("data-min-rows", "3") ] }

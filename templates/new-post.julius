@@ -1,0 +1,12 @@
+$("##{rawJS previewButton}").click(function() {
+  var markdown = $("##{rawJS bodyId}").val();
+  $.ajax({url:"@{PreviewR}",
+          type:"post",
+          data:JSON.stringify({markdown:markdown}),
+          contentType:"application/json; charset=utf-8",
+          dataType:"json",
+          success: function(data) {
+            var html = data["html"];
+            $("##{rawJS previewDiv}").html(html);
+          }});
+});

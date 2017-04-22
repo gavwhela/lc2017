@@ -1,11 +1,17 @@
-// autoexpand textareas with autoexpand class
+// autoexpand textareas with autoexpand classes
 $(document)
   .one('focus.autoexpand', 'textarea.autoexpand', function(){
     this.lastScrollHeight = this.scrollHeight;
   })
-  .on('input.autoexpand', 'textarea.autoexpand', function(){
+  .on('input.autoexpand-small', 'textarea.autoexpand-small', function(){
     if(this.scrollHeight > this.lastScrollHeight) {
       $(this).css('height', Math.min(this.scrollHeight, 200)+"px");
+      this.lastScrollHeight = this.scrollHeight;
+    }
+  })
+  .on('input.autoexpand-big', 'textarea.autoexpand-big', function(){
+    if(this.scrollHeight > this.lastScrollHeight) {
+      $(this).css('height', Math.min(this.scrollHeight, 800)+"px");
       this.lastScrollHeight = this.scrollHeight;
     }
   });
