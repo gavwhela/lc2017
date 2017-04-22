@@ -1,0 +1,5 @@
+$("##{rawJS deleteButton}").click(function() {
+  $.ajax({url:"@{PostR postId}",
+          type:"delete"});
+  window.location.replace("@{HomeR}");
+});

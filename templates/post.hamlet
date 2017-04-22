@@ -2,6 +2,8 @@
   <h1 .post-title> #{postTitle post}
   <p> <a href=@{ProfileR $ postAuthor post}>#{userDisplayName poster}</a>
   <p> #{date}
+  $if isOwner
+    <button ##{deleteButton}>Delete
 <hr>
 $case postHTML
   $of Left err

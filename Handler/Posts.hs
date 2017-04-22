@@ -24,6 +24,9 @@ getPostR postId = do
   comments <- runDB (getComments postId)
   -- Generate HTML for markdown post
   let postHTML = markdownToHtml $ postBody post
+  -- Identifier for delete button
+  deleteButton <- newIdent
+  let isOwner = maybe False ((==) $ postAuthor post) muser
   -- Generate a form for creating new comments
   mform <- traverse (generateFormPost . newCommentForm postId) muser
   defaultLayout $ do
@@ -45,6 +48,9 @@ postPostR postId = do
   comments <- runDB (getComments postId)
   -- Generate HTML for markdown post
   let postHTML = markdownToHtml $ postBody post
+  -- Identifier for delete button
+  deleteButton <- newIdent
+  let isOwner = user == postAuthor post
   -- Generate a form for creating new comments
   ((res, formWidget), enctype) <- runFormPost $ newCommentForm postId user
   case res of
