@@ -12,7 +12,7 @@ a {
 #wrapper {
     height: auto;
     min-height: 100%;
-    margin-bottom: -220px;
+    margin: 0px 20px -220px;
 }
 #wrapper:after {
     content: "";
@@ -111,4 +111,11 @@ a {
 p {
     line-height: 1.6;
     margint: 0 0 20px;
+}
+.delete-comment:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+.delete-comment {
+    color: #ff574d
 }

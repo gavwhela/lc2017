@@ -9,3 +9,4 @@
 !/posts/new NewPostR GET POST
 /profile/#UserId ProfileR GET
 /preview PreviewR POST
+/comment/#CommentId CommentR DELETE

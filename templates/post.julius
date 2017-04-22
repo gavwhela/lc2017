@@ -1,5 +1,15 @@
 $("##{rawJS deleteButton}").click(function() {
   $.ajax({url:"@{PostR postId}",
-          type:"delete"});
-  window.location.replace("@{HomeR}");
+          type:"delete",
+          success: function(data) {
+            window.location.replace("@{HomeR}");
+          }});
+});
+$(".delete-comment").click(function() {
+  var commentId = $(this).attr("commentId");
+  $.ajax({url: "/comment/"+commentId,
+          type:"delete",
+          success: function(data) {
+            location.reload();
+          }});
 });

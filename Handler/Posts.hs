@@ -38,6 +38,7 @@ postPostR :: PostId -> Handler Html
 postPostR postId = do
   -- User ID required to post a comment.
   user <- requireAuthId
+  let muser = Just user
   -- Get post content or 404 if doesn't exist
   post <- runDB $ get404 postId
   -- Get the poster
@@ -83,6 +84,7 @@ deletePostR postId = do
 
 -- Esqueleto query to fetch comments for a given post ID
 getComments :: Key Post -> ReaderT SqlBackend Handler [( E.Value Textarea
+                                                       , E.Value CommentId
                                                        , E.Value Text
                                                        , E.Value UserId)]
 getComments postId = E.select $
@@ -96,8 +98,20 @@ getComments postId = E.select $
         E.on $ comment ^. CommentUserId E.==. user ^. UserId
         -- Only project out the needed fields, display name and comment message
         return ( comment ^. CommentMessage
+               , comment ^. CommentId
                , user ^. UserDisplayName
                , user ^. UserId)
+
+deleteCommentR :: CommentId -> Handler ()
+deleteCommentR commentId = do
+  -- User ID required to delete comment
+  userId <- requireAuthId
+  -- Get comment content or 404 if doesn't exist
+  comment <- runDB $ get404 commentId
+  -- Return 403 if user does not own comment
+  unless (userId == commentUserId comment) (permissionDenied "You do not own that comment")
+  -- Actually delete comment
+  runDB $ delete commentId
 
 -- Format a UTCTime into a human readable date
 formatDate :: UTCTime -> String
