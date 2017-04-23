@@ -1,7 +1,9 @@
-<h1>Editing Profile
-<form role=form method=post action=@{EditProfileR userId} enctype=#{enctype}>
+<span .profile-header>
+  <h1>Editing Profile
+<hr>
+<form id=#{formElement} role=form method=post action=@{EditProfileR userId} enctype=#{enctype}>
   ^{formWidget}
-  <button>Done
+<button type="submit" form=#{formElement} value="Done">Done
 <button ##{previewButton}> Preview
 <hr>
 <div ##{previewDiv}>

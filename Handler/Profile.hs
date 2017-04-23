@@ -22,6 +22,7 @@ getEditProfileR userId = do
   previewButton <- newIdent
   previewDiv <- newIdent
   bioId <- newIdent
+  formElement <- newIdent
   (formWidget, enctype) <- generateFormPost $ editProfileForm user bioId
   defaultLayout $ do
     setTitle . toHtml $ "Editing " <> userDisplayName user <> "'s Profile"
@@ -33,6 +34,7 @@ postEditProfileR userId = do
   previewButton <- newIdent
   previewDiv <- newIdent
   bioId <- newIdent
+  formElement <- newIdent
   ((res, formWidget), enctype) <- runFormPost $ editProfileForm user bioId
   case res of
     FormSuccess (name, bio) -> do

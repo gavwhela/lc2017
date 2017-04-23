@@ -20,7 +20,7 @@ a {
 }
 p {
     line-height: 1.6;
-    margin: 0 0 20px;
+    margin: 0 0 16px;
 }
 #wrapper {
     height: auto;
@@ -136,4 +136,16 @@ p {
     background: #ccffcc;
     border: 1px solid #007700;
     border-radius: 5px;
+}
+.profile-header {
+    h1 {
+        display: inline-block;
+        margin-bottom: 0;
+        margin-top: 22px;
+    }
+    a {
+        color: #{lightgreen};
+        float: right;
+        margin-top: 39px;
+    }
 }

@@ -1,7 +1,8 @@
-<h1> #{userDisplayName user}
-$if isOwner
-  <a href=@{EditProfileR userId}>Edit
-
+<span .profile-header>
+  <h1> #{userDisplayName user}
+  $if isOwner
+    <a href=@{EditProfileR userId}>Edit
+<hr>
 $case bioHTML
   $of Left err
     <p> #{show err}

@@ -15,3 +15,11 @@ $(document)
       this.lastScrollHeight = this.scrollHeight;
     }
   });
+$('textarea.autoexpand-small').each(function () {
+  $(this).css('height', Math.min(this.scrollHeight, 200)+"px");
+  this.lastScrollHeight = this.scrollHeight;
+});
+$('textarea.autoexpand-big').each(function () {
+  $(this).css('height', Math.min(this.scrollHeight, 800)+"px");
+  this.lastScrollHeight = this.scrollHeight;
+});
