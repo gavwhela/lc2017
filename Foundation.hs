@@ -99,6 +99,11 @@ instance Yesod App where
                     , menuItemAccessCallback = isJust muser
                     }
                 , MenuItem
+                    { menuItemLabel = "My Posts"
+                    , menuItemRoute = (PostsByR $ fromJust muser)
+                    , menuItemAccessCallback = isJust muser
+                    }
+                , MenuItem
                     { menuItemLabel = "New Post"
                     , menuItemRoute = NewPostR
                     , menuItemAccessCallback = isJust muser
@@ -134,6 +139,7 @@ instance Yesod App where
     isAuthorized HomeR _ = return Authorized
     isAuthorized (PostR _) False = return Authorized
     isAuthorized (PostR _) True = isAuthenticated
+    isAuthorized (PostsByR _) _ = return Authorized
     isAuthorized (CommentR cid) _ = ownsResource cid commentUserId
     isAuthorized PreviewR _ = isAuthenticated
     isAuthorized NewPostR _ = isAuthenticated

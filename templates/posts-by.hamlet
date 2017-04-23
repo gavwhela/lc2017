@@ -1,0 +1,13 @@
+<header .post-header>
+  <h1 .post-title> #{authorName}
+<hr>
+
+<ol .post-list>
+  $if null posts
+    <p> Nothing here
+  $else
+    $forall Entity postId post <- posts
+      <li .short-post>
+        <a href=@{PostR postId}>
+          <h4 .short-post-title>#{postTitle $ post}
+          : By #{authorName}

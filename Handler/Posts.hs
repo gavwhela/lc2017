@@ -246,3 +246,14 @@ newCommentForm postId user extra = do
                                     , ("class", "autoexpand autoexpand-small")
                                     , ("rows", "3")
                                     , ("data-min-rows", "3") ] }
+
+getPostsByR :: UserId -> Handler Html
+getPostsByR userId = do
+  muser <- maybeAuthId
+  let isOwner = maybe False ((==) $ userId) muser
+  author <- runDB $ get404 userId
+  posts <- runDB $ selectList [ PostAuthor ==. userId ] [ Desc PostId ]
+  let authorName = userDisplayName author
+  defaultLayout $ do
+    setTitle . toHtml $ authorName <> "'s Posts"
+    $(widgetFile "posts-by")

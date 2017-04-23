@@ -7,6 +7,7 @@
 / HomeR GET
 !/posts/#PostId PostR GET POST DELETE
 !/posts/new NewPostR GET POST
+/postsBy/#UserId PostsByR GET
 /profile/#UserId ProfileR GET
 /profile/#UserId/edit EditProfileR GET POST
 /preview PreviewR POST
