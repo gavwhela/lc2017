@@ -1,29 +1,42 @@
+@lightgreen: #57bb54;
+@textcolor: #494949;
+@lighttext: #ccc;
 html, body {
     height: 100%;
 }
 body {
-    color: #494949;
+    color: #{textcolor};
     margin: 0px;
     font-size: 16px;
-}
-a {
-    text-decoration: none;
-}
-#wrapper {
-    height: auto;
-    min-height: 100%;
-    margin: 0px 20px -220px;
-}
-#wrapper:after {
-    content: "";
-    display: block;
-    height: 200px;
 }
 .container {
     margin: 0 auto;
     position: relative;
     width: 100%;
     max-width: 900px;
+}
+a {
+    text-decoration: none;
+}
+p {
+    line-height: 1.6;
+    margin: 0 0 20px;
+}
+#wrapper {
+    height: auto;
+    min-height: 100%;
+    margin: 0px 20px -100px;
+}
+#wrapper:after {
+    content: "";
+    display: block;
+    height: 100px;
+}
+.footer {
+    color: #{lighttext};
+    background: #153015;
+    height: 100px;
+    text-align: center;
 }
 .site-header {
     text-align: center;
@@ -32,12 +45,8 @@ a {
 .post-header {
     text-align: center;
     text-transform: uppercase;
-}
-.post-header a {
-    color: #494949;
-}
-.post-header a:hover {
-    text-decoration: underline;
+    a { color: #{textcolor}; }
+    a:hover { text-decoration: underline; }
 }
 .post-title {
     font-size: 50px;
@@ -54,19 +63,19 @@ a {
     border-bottom: 1px dotted #303030;
     margin: 0;
     position: relative;
-}
-.short-post a {
-    -webkit-transition: all .2s ease-in-out;
-    -moz-transition: all .2s ease-in-out;
-    transition: all .2s ease-in-out;
-    display: block;
-    padding: 20px 5px;
-    color: #494949;
-}
-.short-post a:hover {
-    background: #f8fcf8;
-    color: #57bb54;
-    padding: 20px 12px;
+    a {
+        -webkit-transition: all .2s ease-in-out;
+        -moz-transition: all .2s ease-in-out;
+        transition: all .2s ease-in-out;
+        display: block;
+        padding: 20px 5px;
+        color: #{textcolor};
+    }
+    a:hover {
+        background: #f8fcf8;
+        color: #{lightgreen};
+        padding: 20px 12px;
+    }
 }
 .nav {
     list-style: none;
@@ -78,27 +87,15 @@ a {
     font-size: 14px;
     font-weight: 650;
     margin: 0px 10px;
-}
-.nav-item a {
-    color: #57bb54;
-}
-.footer {
-    color: #cccccc;
-    background: #153015;
-    height: 200px;
-    text-align: center;
+    a { color: #{lightgreen}; }
 }
 .post-comments, .comment-list {
     margin-top: 20px;
 }
 .comment-head {
-    color: #cccccc;
-}
-.comment-head a {
-    color: #cccccc;
-}
-.comment-head a:hover {
-    text-decoration: underline;
+    color: #{lighttext};
+    a { color: #{lighttext}; }
+    a:hover { text-decoration: underline; }
 }
 .comment-body p {
     margin-top: 0px;
@@ -107,10 +104,6 @@ a {
 .short-post-title {
     display: inline-block;
     margin: 0;
-}
-p {
-    line-height: 1.6;
-    margint: 0 0 20px;
 }
 .delete-comment:hover {
     text-decoration: underline;

@@ -16,7 +16,7 @@ $case postHTML
       ^{formWidget}
       <button>Post
   <div .comment-list>
-    $if null comments
+    $if null comments && isJust muser
       <p> Be the first to comment!
     $else
       $forall (E.Value message, E.Value commentId, E.Value name, E.Value commenter) <- comments
