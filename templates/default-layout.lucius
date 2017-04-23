@@ -25,18 +25,36 @@ p {
 #wrapper {
     height: auto;
     min-height: 100%;
-    margin: 0px 20px -100px;
+    margin: 0px 20px -150px;
 }
 #wrapper:after {
     content: "";
     display: block;
-    height: 100px;
+    height: 150px;
 }
 .footer {
     color: #{lighttext};
     background: #153015;
-    height: 100px;
+    height: 150px;
     text-align: center;
+    > .container {
+        padding: 45px 0 0 0;
+    }
+    p {
+        margin-top: 45px;
+        margin-bottom: 0px;
+    }
+    a {
+        background: #333;
+        color: #fff;
+        font-size: 20px;
+        margin: 0px 3px;
+        padding: 0px 10px;
+    }
+    a:hover {
+        background: #111;
+        color: #{lightgreen};
+    }
 }
 .site-header {
     text-align: center;
@@ -89,6 +107,7 @@ p {
     margin: 0px 10px;
     a { color: #{lightgreen}; }
 }
+.nav-item-selected { text-decoration: underline; }
 .post-comments, .comment-list {
     margin-top: 20px;
 }

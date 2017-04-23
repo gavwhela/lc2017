@@ -89,7 +89,7 @@ instance Yesod App where
         -- Define the menu items of the header.
         let menuItems =
                 [ MenuItem
-                    { menuItemLabel = "Home"
+                    { menuItemLabel = "Blog"
                     , menuItemRoute = HomeR
                     , menuItemAccessCallback = True
                     }

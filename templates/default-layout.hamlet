@@ -4,20 +4,22 @@
     <nav .container>
       <ul .nav>
         $forall MenuItem label route _ <- navbarFilteredMenuItems
-          <li .nav-item>
+          <li .nav-item :Just route == mcurrentRoute:.nav-item-selected>
             <a href="@{route}">#{label}
 
   <!-- Page Contents -->
 
   <div .container>
-      $maybe msg <- mmsg
-        <div #message>#{msg}
+    $maybe msg <- mmsg
+      <div #message>#{msg}
 
   <div .container>
     ^{widget}
 
 <!-- Footer -->
 <footer .footer>
-    <div .container>
-        <p>
-            #{appCopyright $ appSettings master}
+  <div .container>
+    <a href=@{HomeR}>#{appBlogName $ appSettings master}
+    <a href=#>&#x25B2;
+    <p>
+      #{appCopyright $ appSettings master}
