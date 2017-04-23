@@ -65,6 +65,7 @@ p {
     text-transform: uppercase;
     a { color: #{textcolor}; }
     a:hover { text-decoration: underline; }
+    p { margin-bottom: 4px; }
 }
 .post-title {
     font-size: 50px;

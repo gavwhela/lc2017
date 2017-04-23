@@ -3,7 +3,7 @@
 <hr>
 <form id=#{formElement} role=form method=post action=@{EditProfileR userId} enctype=#{enctype}>
   ^{formWidget}
-<button type="submit" form=#{formElement} value="Done">Done
+<button type=submit form=#{formElement} value=Done>Done
 <button ##{previewButton}> Preview
 <hr>
 <div ##{previewDiv}>

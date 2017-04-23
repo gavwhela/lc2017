@@ -10,22 +10,25 @@ $case postHTML
     <p> #{show err}
   $of Right html
     ^{html}
+<hr>
 <div .post-comments>
   $maybe (formWidget, enctype) <- mform
     <form role=form method=post action=@{PostR postId} enctype=#{enctype}>
       ^{formWidget}
       <button>Post
+  $nothing
+    <p>
+      <a href=@{AuthR LoginR}>Log in to comment
   <div .comment-list>
     $if null comments && isJust muser
       <p> Be the first to comment!
-    $else
-      $forall (E.Value message, E.Value commentId, E.Value name, E.Value commenter) <- comments
-        <div .comment>
-          <div .comment-head>
-            <span> <a href=@{ProfileR commenter}>#{name}</a>
-            &nbsp
-            $maybe user <- muser
-              $if user == commenter
-                <span .delete-comment commentId=#{E.fromSqlKey commentId}> delete
-          <div .comment-body>
-            <p> #{message}
+    $forall (E.Value message, E.Value commentId, E.Value name, E.Value commenter) <- comments
+      <div .comment>
+        <div .comment-head>
+          <span> <a href=@{ProfileR commenter}>#{name}</a>
+          &nbsp
+          $maybe user <- muser
+            $if user == commenter
+              <span .delete-comment commentId=#{E.fromSqlKey commentId}> delete
+        <div .comment-body>
+          <p> #{message}

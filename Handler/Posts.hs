@@ -127,6 +127,7 @@ getNewPostR = do
   previewButton <- newIdent
   previewDiv <- newIdent
   bodyId <- newIdent
+  formId <- newIdent
   (formWidget, enctype) <- generateFormPost $ newPostForm user time bodyId
   defaultLayout $ do
         setTitle "New Post"
@@ -163,6 +164,7 @@ postNewPostR = do
   previewButton <- newIdent
   previewDiv <- newIdent
   bodyId <- newIdent
+  formId <- newIdent
   ((res, formWidget), enctype) <- runFormPost $ newPostForm user time bodyId
   case res of
     FormSuccess entry -> do

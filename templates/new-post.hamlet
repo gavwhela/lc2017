@@ -1,7 +1,7 @@
 <h1>New Post
-<form role=form method=post action=@{NewPostR} enctype=#{enctype}>
+<form id=#{formId} role=form method=post action=@{NewPostR} enctype=#{enctype}>
   ^{formWidget}
-  <button>Submit
+<button type=submit form=#{formId} value=Submit>Submit
 <button ##{previewButton}>Preview
 <hr>
 <div ##{previewDiv}>
