@@ -9,148 +9,94 @@ import Data.Aeson.Types (Parser, parseMaybe)
 import Text.Blaze.Html.Renderer.Utf8 (renderHtml)
 import qualified Data.Text.Lazy.Encoding as LE (decodeUtf8)
 import Text.Julius (rawJS)
+import Handler.Helpers
 
--- Handler for an individual post
 getPostR :: PostId -> Handler Html
-getPostR postId = do
-  muser <- maybeAuthId
-  -- Get post content or 404 if doesn't exist
-  post <- runDB $ get404 postId
-  -- Get the poster
-  poster <- runDB $ get404 $ postAuthor post
-  -- Formatted date
-  let date = formatDate $ postCreated post
-  -- Select comments for this post
-  comments <- runDB (getComments postId)
-  -- Generate HTML for markdown post
-  let postHTML = markdownToHtml $ postBody post
-  let isOwner = maybe False ((==) $ postAuthor post) muser
-  -- Generate a form for creating new comments
-  mform <- traverse (generateFormPost . newCommentForm postId) muser
-  defaultLayout $ do
-        setTitle . toHtml $ postTitle post
-        $(widgetFile "post")
+getPostR = postPostR
 
--- Posting to an individual post is used to create comments
 postPostR :: PostId -> Handler Html
 postPostR postId = do
-  -- User ID required to post a comment.
-  user <- requireAuthId
-  let muser = Just user
-  -- Get post content or 404 if doesn't exist
+  muser <- maybeAuthId
   post <- runDB $ get404 postId
-  -- Get the poster
   poster <- runDB $ get404 $ postAuthor post
-  -- Formatted date
   let date = formatDate $ postCreated post
-  -- Select comments for this post
   comments <- runDB (getComments postId)
-  -- Generate HTML for markdown post
   let postHTML = markdownToHtml $ postBody post
-  let isOwner = user == postAuthor post
-  -- Generate a form for creating new comments
-  ((res, formWidget), enctype) <- runFormPost $ newCommentForm postId user
-  case res of
-    FormSuccess entry -> do
-        runDB $ insert_ entry
-        setMessage "Successfully created comment"
-        redirect (PostR postId)
-    _ -> defaultLayout $ do
+  let isOwner = maybe False ((==) $ postAuthor post) muser
+  mform <- traverse (runFormPost . newCommentForm postId) muser
+  case mform of
+    Nothing -> defaultLayout $ do
+                     setTitle . toHtml $ postTitle post
+                     $(widgetFile "post")
+    Just ((FormSuccess entry, _), _) ->
+        do runDB $ insert_ entry
+           setMessage "Successfully created comment"
+           redirect (PostR postId)
+    Just _ ->
+        defaultLayout $ do
                setTitle . toHtml $ postTitle post
-               let mform = Just (formWidget, enctype)
                $(widgetFile "post")
 
--- Delete a post
 deletePostR :: PostId -> Handler Html
 deletePostR postId = do
-  -- User ID required to delete post
   userId <- requireAuthId
-  -- Get post content or 404 if doesn't exist
   post <- runDB $ get404 postId
-  -- Return 403 if user does not own post
   unless (userId == postAuthor post) (permissionDenied "You do not own that post")
-  -- Actually delete post and comments on post
   runDB $ do
     deleteWhere [CommentPostId ==. postId]
     delete postId
-  -- Set success message in session
   setMessage "Deleted Post"
-  -- Redirect to post list
   redirect HomeR
 
--- Esqueleto query to fetch comments for a given post ID
 getComments :: Key Post -> ReaderT SqlBackend Handler [( E.Value Textarea
                                                        , E.Value CommentId
                                                        , E.Value Text
                                                        , E.Value UserId)]
 getComments postId = E.select $
-     -- Join comments and users to get display names
      E.from $ \(comment `E.InnerJoin` user) -> do
-        -- Only posts for this post ID
         E.where_ ( comment ^. CommentPostId E.==. E.val postId )
-        -- Order newest first
         E.orderBy [E.desc $ comment ^. CommentId]
-        -- Join users to comments when the ids match
         E.on $ comment ^. CommentUserId E.==. user ^. UserId
-        -- Only project out the needed fields, display name and comment message
         return ( comment ^. CommentMessage
                , comment ^. CommentId
                , user ^. UserDisplayName
                , user ^. UserId)
 
 deleteCommentR :: CommentId -> Handler ()
-deleteCommentR commentId = do
-  -- User ID required to delete comment
-  userId <- requireAuthId
-  -- Get comment content or 404 if doesn't exist
-  comment <- runDB $ get404 commentId
-  -- Return 403 if user does not own comment
-  unless (userId == commentUserId comment) (permissionDenied "You do not own that comment")
-  -- Actually delete comment
-  runDB $ delete commentId
-
--- Format a UTCTime into a human readable date
-formatDate :: UTCTime -> String
-formatDate = formatTime defaultTimeLocale dateFormat
-    where dateFormat = "%a, %B %e, %0Y"
+deleteCommentR commentId = runDB $ delete commentId
 
 parsePreview :: Value -> Parser Markdown
 parsePreview = withObject "preview" (\obj -> do
                                        markdown <- obj .: "markdown"
                                        return $ Markdown markdown)
 
--- Handler takes JSON markdown and return JSON of the markdown rendered into HTML
 postPreviewR :: Handler Value
 postPreviewR = do
   mMarkdown <- do rval <- parseCheckJsonBody
                   case rval of
                     Error _ -> return Nothing
                     Success val -> return $ parseMaybe parsePreview val
-  let failed = return $ object [ "status" .= ("fail" :: Text) ]
   case mMarkdown of
-    Nothing -> failed
+    Nothing -> return $ object []
     Just markdown ->
-        do let mpreviewHtml = markdownToHtml markdown
-           case mpreviewHtml of
-             Left _ -> failed
+        let mpreviewHtml = markdownToHtml markdown
+        in case mpreviewHtml of
+             Left _ -> return $ object []
              Right previewHtml ->
-               return $ object [ "status" .= ("success" :: Text)
-                               , "html" .= (LE.decodeUtf8 $ renderHtml previewHtml)]
+               return $ object [ "html" .= (LE.decodeUtf8 $ renderHtml previewHtml)]
 
--- Handler for page to create new posts
 getNewPostR :: Handler Html
 getNewPostR = postNewPostR
 
 postNewPostR :: Handler Html
 postNewPostR = do
-  -- User ID required to create posts
   user <- requireAuthId
   time <- liftIO getCurrentTime
   bodyId <- newIdent
   formId <- newIdent
   let submitRoute = NewPostR
       header = "New Post" :: Text
-  ((res, formWidget), enctype) <- runFormPost $ newPostForm user time Nothing Nothing bodyId
+  ((res, formWidget), enctype) <- runFormPost $ newPostForm user time Nothing "" bodyId
   case res of
     FormSuccess entry -> do
         runDB $ insert_ entry
@@ -173,7 +119,7 @@ postEditPostR postId = do
       header = "Edit Post" :: Text
       created = postCreated post
       lastTitle = Just $ postTitle post
-      lastBody = Just $ postBody post
+      lastBody = postBody post
   ((res, formWidget), enctype) <- runFormPost $ newPostForm user created lastTitle lastBody bodyId
   case res of
     FormSuccess entry -> do
@@ -184,13 +130,12 @@ postEditPostR postId = do
                setTitle "Edit Post"
                $(widgetFile "new-post")
 
--- Form to create a new post
-newPostForm :: UserId -> UTCTime -> Maybe Text -> Maybe Markdown -> Text -> Form Post
-newPostForm user currentTime mtitle mbody bodyId = renderDivsNoLabels $ Post
+newPostForm :: UserId -> UTCTime -> Maybe Text -> Markdown -> Text -> Form Post
+newPostForm user currentTime mtitle body bodyId = renderDivsNoLabels $ Post
   <$> areq textField titleFieldSettings mtitle
   <*> pure user
   <*> pure currentTime
-  <*> (maybe "" id <$> (aopt markdownField bodyFieldSettings $ Just mbody))
+  <*> areq markdownField bodyFieldSettings (Just body)
     where
       bodyFieldSettings =
           FieldSettings { fsLabel = "Unused"
@@ -208,7 +153,6 @@ newPostForm user currentTime mtitle mbody bodyId = renderDivsNoLabels $ Post
                         , fsName = Nothing
                         , fsAttrs = [ ("placeholder", "Title") ] }
 
--- Form to create a new comment
 newCommentForm :: PostId -> UserId -> Form Comment
 newCommentForm postId user = renderDivsNoLabels $ Comment
   <$> areq textareaField messageFieldSettings Nothing

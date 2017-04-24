@@ -14,7 +14,7 @@ $case postHTML
     ^{html}
 <hr>
 <div .post-comments>
-  $maybe (formWidget, enctype) <- mform
+  $maybe ((_, formWidget), enctype) <- mform
     <form role=form method=post action=@{PostR postId} enctype=#{enctype}>
       ^{formWidget}
       <button>Comment

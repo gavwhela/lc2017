@@ -24,6 +24,7 @@ library
                      Handler.Home
                      Handler.Posts
                      Handler.Profile
+                     Handler.Helpers
 
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT

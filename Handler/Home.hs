@@ -3,11 +3,7 @@ module Handler.Home where
 import Import
 import qualified Database.Esqueleto as E
 import           Database.Esqueleto ((^.))
-
--- Format a UTCTime into a human readable date
-formatDate :: UTCTime -> String
-formatDate = formatTime defaultTimeLocale dateFormat
-    where dateFormat = "%a, %B %e, %0Y"
+import Handler.Helpers
 
 getHomeR :: Handler Html
 getHomeR = do
