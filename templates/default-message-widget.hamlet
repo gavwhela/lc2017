@@ -1,6 +1,4 @@
 <div .container>
-  <div .row>
-    <div .col-md-2>
-    <div .col-md-8>
-      <h1>#{title}
-      ^{body}
+  <h1>#{title}
+  <hr>
+  ^{body}
