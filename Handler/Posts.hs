@@ -118,21 +118,6 @@ formatDate :: UTCTime -> String
 formatDate = formatTime defaultTimeLocale dateFormat
     where dateFormat = "%a, %B %e, %0Y"
 
--- Handler for page to create new posts
-getNewPostR :: Handler Html
-getNewPostR = do
-  -- User ID required to create posts
-  user <- requireAuthId
-  time <- liftIO getCurrentTime
-  previewButton <- newIdent
-  previewDiv <- newIdent
-  bodyId <- newIdent
-  formId <- newIdent
-  (formWidget, enctype) <- generateFormPost $ newPostForm user time bodyId
-  defaultLayout $ do
-        setTitle "New Post"
-        $(widgetFile "new-post")
-
 parsePreview :: Value -> Parser Markdown
 parsePreview = withObject "preview" (\obj -> do
                                        markdown <- obj .: "markdown"
@@ -156,6 +141,22 @@ postPreviewR = do
                return $ object [ "status" .= ("success" :: Text)
                                , "html" .= (LE.decodeUtf8 $ renderHtml previewHtml)]
 
+-- Handler for page to create new posts
+getNewPostR :: Handler Html
+getNewPostR = do
+  -- User ID required to create posts
+  user <- requireAuthId
+  time <- liftIO getCurrentTime
+  previewButton <- newIdent
+  previewDiv <- newIdent
+  bodyId <- newIdent
+  formId <- newIdent
+  let submitRoute = NewPostR
+  (formWidget, enctype) <- generateFormPost $ newPostForm user time Nothing Nothing bodyId
+  defaultLayout $ do
+        setTitle "New Post"
+        $(widgetFile "new-post")
+
 postNewPostR :: Handler Html
 postNewPostR = do
   -- User ID required to create posts
@@ -165,7 +166,8 @@ postNewPostR = do
   previewDiv <- newIdent
   bodyId <- newIdent
   formId <- newIdent
-  ((res, formWidget), enctype) <- runFormPost $ newPostForm user time bodyId
+  let submitRoute = NewPostR
+  ((res, formWidget), enctype) <- runFormPost $ newPostForm user time Nothing Nothing bodyId
   case res of
     FormSuccess entry -> do
         runDB $ insert_ entry
@@ -175,11 +177,50 @@ postNewPostR = do
                setTitle "New Post"
                $(widgetFile "new-post")
 
+getEditPostR :: PostId -> Handler Html
+getEditPostR postId = do
+  user <- requireAuthId
+  post <- runDB $ get404 postId
+  previewButton <- newIdent
+  previewDiv <- newIdent
+  bodyId <- newIdent
+  formId <- newIdent
+  let submitRoute = EditPostR postId
+      created = postCreated post
+      lastTitle = Just $ postTitle post
+      lastBody = Just $ postBody post
+  (formWidget, enctype) <- generateFormPost $ newPostForm user created lastTitle lastBody bodyId
+  defaultLayout $ do
+    setTitle "Edit Post"
+    $(widgetFile "new-post")
+
+postEditPostR :: PostId -> Handler Html
+postEditPostR postId = do
+  user <- requireAuthId
+  post <- runDB $ get404 postId
+  previewButton <- newIdent
+  previewDiv <- newIdent
+  bodyId <- newIdent
+  formId <- newIdent
+  let submitRoute = EditPostR postId
+      created = postCreated post
+      lastTitle = Just $ postTitle post
+      lastBody = Just $ postBody post
+  ((res, formWidget), enctype) <- runFormPost $ newPostForm user created lastTitle lastBody bodyId
+  case res of
+    FormSuccess entry -> do
+        runDB $ replace postId entry
+        setMessage "Successfully edited post"
+        redirect $ PostR postId
+    _ -> defaultLayout $ do
+               setTitle "New Post"
+               $(widgetFile "new-post")
+
 -- Form to create a new post
-newPostForm :: UserId -> UTCTime -> Text -> Html -> MForm Handler (FormResult Post, Widget)
-newPostForm user currentTime bodyId extra = do
-  (titleRes, titleView) <- mreq textField titleFieldSettings Nothing
-  (bodyRes, bodyView) <- mreq markdownField bodyFieldSettings Nothing
+newPostForm :: UserId -> UTCTime -> Maybe Text -> Maybe Markdown -> Text -> Html -> MForm Handler (FormResult Post, Widget)
+newPostForm user currentTime mtitle mbody bodyId extra = do
+  (titleRes, titleView) <- mreq textField titleFieldSettings mtitle
+  (bodyRes, bodyView) <- mreq markdownField bodyFieldSettings mbody
   let postRes = Post <$> titleRes <*> pure user <*> pure currentTime <*> bodyRes
   let widget = do
         toWidget

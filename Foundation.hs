@@ -139,6 +139,7 @@ instance Yesod App where
     isAuthorized HomeR _ = return Authorized
     isAuthorized (PostR _) False = return Authorized
     isAuthorized (PostR _) True = isAuthenticated
+    isAuthorized (EditPostR pid) _ = ownsResource pid postAuthor
     isAuthorized (PostsByR _) _ = return Authorized
     isAuthorized (CommentR cid) _ = ownsResource cid commentUserId
     isAuthorized PreviewR _ = isAuthenticated

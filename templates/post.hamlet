@@ -4,6 +4,7 @@
   <p> #{date}
   $if isOwner
     <button ##{deleteButton}>Delete
+    <a href=@{EditPostR postId}>Edit
 <hr>
 $case postHTML
   $of Left err
