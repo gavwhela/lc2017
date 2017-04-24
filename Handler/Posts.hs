@@ -139,18 +139,7 @@ postPreviewR = do
 
 -- Handler for page to create new posts
 getNewPostR :: Handler Html
-getNewPostR = do
-  -- User ID required to create posts
-  user <- requireAuthId
-  time <- liftIO getCurrentTime
-  bodyId <- newIdent
-  formId <- newIdent
-  let submitRoute = NewPostR
-      header = "New Post" :: Text
-  (formWidget, enctype) <- generateFormPost $ newPostForm user time Nothing Nothing bodyId
-  defaultLayout $ do
-        setTitle "New Post"
-        $(widgetFile "new-post")
+getNewPostR = postNewPostR
 
 postNewPostR :: Handler Html
 postNewPostR = do
@@ -166,26 +155,13 @@ postNewPostR = do
     FormSuccess entry -> do
         runDB $ insert_ entry
         setMessage "Successfully created post"
-        redirect HomeR
+        redirect $ PostsByR user
     _ -> defaultLayout $ do
                setTitle "New Post"
                $(widgetFile "new-post")
 
 getEditPostR :: PostId -> Handler Html
-getEditPostR postId = do
-  user <- requireAuthId
-  post <- runDB $ get404 postId
-  bodyId <- newIdent
-  formId <- newIdent
-  let submitRoute = EditPostR postId
-      header = "Edit Post" :: Text
-      created = postCreated post
-      lastTitle = Just $ postTitle post
-      lastBody = Just $ postBody post
-  (formWidget, enctype) <- generateFormPost $ newPostForm user created lastTitle lastBody bodyId
-  defaultLayout $ do
-    setTitle "Edit Post"
-    $(widgetFile "new-post")
+getEditPostR = postEditPostR
 
 postEditPostR :: PostId -> Handler Html
 postEditPostR postId = do
@@ -205,7 +181,7 @@ postEditPostR postId = do
         setMessage "Successfully edited post"
         redirect $ PostR postId
     _ -> defaultLayout $ do
-               setTitle "New Post"
+               setTitle "Edit Post"
                $(widgetFile "new-post")
 
 -- Form to create a new post
