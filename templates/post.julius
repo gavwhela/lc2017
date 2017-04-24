@@ -1,4 +1,4 @@
-$("##{rawJS deleteButton}").click(function() {
+$(".delete-post").click(function() {
   $.ajax({url:"@{PostR postId}",
           type:"delete",
           success: function(data) {

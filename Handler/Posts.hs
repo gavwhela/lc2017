@@ -24,8 +24,6 @@ getPostR postId = do
   comments <- runDB (getComments postId)
   -- Generate HTML for markdown post
   let postHTML = markdownToHtml $ postBody post
-  -- Identifier for delete button
-  deleteButton <- newIdent
   let isOwner = maybe False ((==) $ postAuthor post) muser
   -- Generate a form for creating new comments
   mform <- traverse (generateFormPost . newCommentForm postId) muser
@@ -49,8 +47,6 @@ postPostR postId = do
   comments <- runDB (getComments postId)
   -- Generate HTML for markdown post
   let postHTML = markdownToHtml $ postBody post
-  -- Identifier for delete button
-  deleteButton <- newIdent
   let isOwner = user == postAuthor post
   -- Generate a form for creating new comments
   ((res, formWidget), enctype) <- runFormPost $ newCommentForm postId user
@@ -130,13 +126,13 @@ postPreviewR = do
                   case rval of
                     Error _ -> return Nothing
                     Success val -> return $ parseMaybe parsePreview val
-  let fail = return $ object [ "status" .= ("fail" :: Text) ]
+  let failed = return $ object [ "status" .= ("fail" :: Text) ]
   case mMarkdown of
-    Nothing -> fail
+    Nothing -> failed
     Just markdown ->
         do let mpreviewHtml = markdownToHtml markdown
            case mpreviewHtml of
-             Left _ -> fail
+             Left _ -> failed
              Right previewHtml ->
                return $ object [ "status" .= ("success" :: Text)
                                , "html" .= (LE.decodeUtf8 $ renderHtml previewHtml)]
@@ -290,8 +286,6 @@ newCommentForm postId user extra = do
 
 getPostsByR :: UserId -> Handler Html
 getPostsByR userId = do
-  muser <- maybeAuthId
-  let isOwner = maybe False ((==) $ userId) muser
   author <- runDB $ get404 userId
   posts <- runDB $ selectList [ PostAuthor ==. userId ] [ Desc PostId ]
   let authorName = userDisplayName author

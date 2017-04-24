@@ -1,6 +1,7 @@
 @lightgreen: #57bb54;
 @textcolor: #494949;
 @lighttext: #ccc;
+@deletecolor: #ff574d;
 html, body {
     height: 100%;
 }
@@ -66,6 +67,17 @@ p {
     a { color: #{textcolor}; }
     a:hover { text-decoration: underline; }
     p { margin-bottom: 4px; }
+    .delete-post {
+        text-transform: none;
+        color: #{deletecolor};
+    }
+    .delete-post:hover {
+        cursor: pointer;
+    }
+    .edit-post {
+        text-transform: none;
+        color: #{lightgreen};
+    }
 }
 .post-title {
     font-size: 50px;
@@ -130,7 +142,7 @@ p {
     cursor: pointer;
 }
 .delete-comment {
-    color: #ff574d
+    color: #{deletecolor};
 }
 #message {
     text-align: center;

@@ -10,4 +10,4 @@
       <li .short-post>
         <a href=@{PostR postId}>
           <h4 .short-post-title>#{postTitle $ post}
-          : By #{authorName}
+          : #{authorName} : #{formatDate $ postCreated post}
