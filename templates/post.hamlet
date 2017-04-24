@@ -17,7 +17,7 @@ $case postHTML
   $maybe (formWidget, enctype) <- mform
     <form role=form method=post action=@{PostR postId} enctype=#{enctype}>
       ^{formWidget}
-      <button>Post
+      <button>Comment
   $nothing
     <p>
       <a href=@{AuthR LoginR}>Log in to comment

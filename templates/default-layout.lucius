@@ -162,3 +162,19 @@ p {
         margin-top: 39px;
     }
 }
+textarea {
+    width: 100%;
+    resize: none;
+    border-radius: 3px;
+}
+input[type="text"], input[type="password"], input[type="email"] {
+    width: 100%;
+    margin-bottom: 10px;
+}
+.loginDiv a {
+    text-decoration: none;
+    color: #{lightgreen};
+    width: 100%;
+    display: block;
+    margin-top: 5px;
+}

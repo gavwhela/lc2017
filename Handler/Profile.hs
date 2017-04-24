@@ -48,8 +48,8 @@ postEditProfileR userId = do
 editProfileForm :: User -> Text -> Html -> MForm Handler (FormResult (Text, Markdown), Widget)
 editProfileForm user bioId extra = do
   (nameRes, nameView) <- mreq textField nameFieldSettings $ Just $ userDisplayName user
-  (bioRes, bioView) <- mreq markdownField bioFieldSettings $ Just $ userBio user
-  let profileRes = (,) <$> nameRes <*> bioRes
+  (bioRes, bioView) <- mopt markdownField bioFieldSettings $ Just $ Just $ userBio user
+  let profileRes = (,) <$> nameRes <*> (maybe "" id <$> bioRes)
   let widget = do
         toWidget
             [lucius|

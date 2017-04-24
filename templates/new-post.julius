@@ -1,4 +1,4 @@
-$("##{rawJS previewButton}").click(function() {
+$(".preview-button").click(function() {
   var markdown = $("##{rawJS bodyId}").val();
   $.ajax({url:"@{PreviewR}",
           type:"post",
@@ -7,6 +7,6 @@ $("##{rawJS previewButton}").click(function() {
           dataType:"json",
           success: function(data) {
             var html = data["html"];
-            $("##{rawJS previewDiv}").html(html);
+            $(".preview-div").html(html);
           }});
 });

@@ -143,11 +143,10 @@ getNewPostR = do
   -- User ID required to create posts
   user <- requireAuthId
   time <- liftIO getCurrentTime
-  previewButton <- newIdent
-  previewDiv <- newIdent
   bodyId <- newIdent
   formId <- newIdent
   let submitRoute = NewPostR
+      header = "New Post" :: Text
   (formWidget, enctype) <- generateFormPost $ newPostForm user time Nothing Nothing bodyId
   defaultLayout $ do
         setTitle "New Post"
@@ -158,11 +157,10 @@ postNewPostR = do
   -- User ID required to create posts
   user <- requireAuthId
   time <- liftIO getCurrentTime
-  previewButton <- newIdent
-  previewDiv <- newIdent
   bodyId <- newIdent
   formId <- newIdent
   let submitRoute = NewPostR
+      header = "New Post" :: Text
   ((res, formWidget), enctype) <- runFormPost $ newPostForm user time Nothing Nothing bodyId
   case res of
     FormSuccess entry -> do
@@ -177,11 +175,10 @@ getEditPostR :: PostId -> Handler Html
 getEditPostR postId = do
   user <- requireAuthId
   post <- runDB $ get404 postId
-  previewButton <- newIdent
-  previewDiv <- newIdent
   bodyId <- newIdent
   formId <- newIdent
   let submitRoute = EditPostR postId
+      header = "Edit Post" :: Text
       created = postCreated post
       lastTitle = Just $ postTitle post
       lastBody = Just $ postBody post
@@ -194,11 +191,10 @@ postEditPostR :: PostId -> Handler Html
 postEditPostR postId = do
   user <- requireAuthId
   post <- runDB $ get404 postId
-  previewButton <- newIdent
-  previewDiv <- newIdent
   bodyId <- newIdent
   formId <- newIdent
   let submitRoute = EditPostR postId
+      header = "Edit Post" :: Text
       created = postCreated post
       lastTitle = Just $ postTitle post
       lastBody = Just $ postBody post
@@ -213,30 +209,12 @@ postEditPostR postId = do
                $(widgetFile "new-post")
 
 -- Form to create a new post
-newPostForm :: UserId -> UTCTime -> Maybe Text -> Maybe Markdown -> Text -> Html -> MForm Handler (FormResult Post, Widget)
-newPostForm user currentTime mtitle mbody bodyId extra = do
-  (titleRes, titleView) <- mreq textField titleFieldSettings mtitle
-  (bodyRes, bodyView) <- mreq markdownField bodyFieldSettings mbody
-  let postRes = Post <$> titleRes <*> pure user <*> pure currentTime <*> bodyRes
-  let widget = do
-        toWidget
-            [lucius|
-               ##{fvId titleView} {
-                   width: 100%;
-                   margin-bottom: 10px;
-               }
-               ##{fvId bodyView} {
-                   width: 100%;
-                   resize: none;
-                   border-radius: 3px;
-               }
-            |]
-        [whamlet|
-            #{extra}
-            ^{fvInput titleView}
-            ^{fvInput bodyView}
-        |]
-  return (postRes, widget)
+newPostForm :: UserId -> UTCTime -> Maybe Text -> Maybe Markdown -> Text -> Form Post
+newPostForm user currentTime mtitle mbody bodyId = renderDivsNoLabels $ Post
+  <$> areq textField titleFieldSettings mtitle
+  <*> pure user
+  <*> pure currentTime
+  <*> (maybe "" id <$> (aopt markdownField bodyFieldSettings $ Just mbody))
     where
       bodyFieldSettings =
           FieldSettings { fsLabel = "Unused"
@@ -255,24 +233,11 @@ newPostForm user currentTime mtitle mbody bodyId extra = do
                         , fsAttrs = [ ("placeholder", "Title") ] }
 
 -- Form to create a new comment
-newCommentForm :: PostId -> UserId -> Html -> MForm Handler (FormResult Comment, Widget)
-newCommentForm postId user extra = do
-  (messageRes, messageView) <- mreq textareaField messageFieldSettings Nothing
-  let commentRes = Comment <$> messageRes <*> pure user <*> pure postId
-  let widget = do
-        toWidget
-            [lucius|
-               ##{fvId messageView} {
-                   width: 100%;
-                   resize: none;
-                   border-radius: 3px;
-               }
-            |]
-        [whamlet|
-            #{extra}
-            ^{fvInput messageView}
-        |]
-  return (commentRes, widget)
+newCommentForm :: PostId -> UserId -> Form Comment
+newCommentForm postId user = renderDivsNoLabels $ Comment
+  <$> areq textareaField messageFieldSettings Nothing
+  <*> pure user
+  <*> pure postId
     where
       messageFieldSettings =
           FieldSettings { fsLabel = "Unused"
