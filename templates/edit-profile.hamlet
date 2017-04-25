@@ -4,6 +4,6 @@
 <form id=#{formElement} role=form method=post action=@{EditProfileR userId} enctype=#{enctype}>
   ^{formWidget}
 <button type=submit form=#{formElement} value=Done>Done
-<button ##{previewButton}> Preview
+<button .preview-button> Preview
 <hr>
-<div ##{previewDiv}>
+<div .preview-div>

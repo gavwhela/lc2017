@@ -17,22 +17,11 @@ getProfileR userId = do
         $(widgetFile "profile")
 
 getEditProfileR :: UserId -> Handler Html
-getEditProfileR userId = do
-  user <- runDB $ get404 userId
-  previewButton <- newIdent
-  previewDiv <- newIdent
-  bioId <- newIdent
-  formElement <- newIdent
-  (formWidget, enctype) <- generateFormPost $ editProfileForm user bioId
-  defaultLayout $ do
-    setTitle . toHtml $ "Editing " <> userDisplayName user <> "'s Profile"
-    $(widgetFile "edit-profile")
+getEditProfileR = postEditProfileR
 
 postEditProfileR :: UserId -> Handler Html
 postEditProfileR userId = do
   user <- runDB $ get404 userId
-  previewButton <- newIdent
-  previewDiv <- newIdent
   bioId <- newIdent
   formElement <- newIdent
   ((res, formWidget), enctype) <- runFormPost $ editProfileForm user bioId
@@ -45,30 +34,10 @@ postEditProfileR userId = do
              setTitle . toHtml $ "Editing " <> userDisplayName user <> "'s Profile"
              $(widgetFile "edit-profile")
 
-editProfileForm :: User -> Text -> Html -> MForm Handler (FormResult (Text, Markdown), Widget)
-editProfileForm user bioId extra = do
-  (nameRes, nameView) <- mreq textField nameFieldSettings $ Just $ userDisplayName user
-  (bioRes, bioView) <- mopt markdownField bioFieldSettings $ Just $ Just $ userBio user
-  let profileRes = (,) <$> nameRes <*> (fromMaybe "" <$> bioRes)
-  let widget = do
-        toWidget
-            [lucius|
-               ##{fvId nameView} {
-                   width: 100%;
-                   margin-bottom: 10px;
-               }
-               ##{fvId bioView} {
-                   width: 100%;
-                   resize: none;
-                   border-radius: 3px;
-               }
-            |]
-        [whamlet|
-            #{extra}
-            ^{fvInput nameView}
-            ^{fvInput bioView}
-        |]
-  return (profileRes, widget)
+editProfileForm :: User -> Text -> Form (Text, Markdown)
+editProfileForm user bioId = renderDivsNoLabels $ (,)
+  <$> (areq textField nameFieldSettings $ Just $ userDisplayName user)
+  <*> (fromMaybe "" <$> (aopt markdownField bioFieldSettings $ Just $ Just $ userBio user))
     where
       bioFieldSettings =
           FieldSettings { fsLabel = "Unused"
@@ -84,4 +53,4 @@ editProfileForm user bioId extra = do
                         , fsTooltip = Nothing
                         , fsId = Nothing
                         , fsName = Nothing
-                        , fsAttrs = [ ("placeholder", "name") ] }
+                        , fsAttrs = [ ("placeholder", "Name") ] }
