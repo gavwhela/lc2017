@@ -214,10 +214,10 @@ instance YesodAuth App where
     redirectToReferer _ = True
 
     authenticate creds = runDB $ do
-        x <- getBy $ UniqueUser $ credsIdent creds
+        x <- insertBy $ User (credsIdent creds) "" "" (credsIdent creds) "" False "" ""
         case x of
-            Just (Entity uid _) -> return $ Authenticated uid
-            Nothing -> return $ UserError NoIdentifierProvided
+            Left (Entity uid _) -> return $ Authenticated uid
+            Right uid -> return $ Authenticated uid
 
     -- You can add other plugins like Google Email, email or OAuth here
     authPlugins app = [accountPlugin] ++ extraAuthPlugins
