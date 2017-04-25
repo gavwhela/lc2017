@@ -62,7 +62,6 @@ library
                  , yesod-static                  >= 1.4.0.3    && < 1.6
                  , yesod-form                    >= 1.4.0      && < 1.5
                  , classy-prelude                >= 0.10.2
-                 , classy-prelude-conduit        >= 0.10.2
                  -- version 1.0 had a bug in reexporting Handler, causing trouble
                  , classy-prelude-yesod          >= 0.10.2     && < 1.0
                                               || >= 1.1
@@ -74,27 +73,18 @@ library
                  , template-haskell
                  , shakespeare                   >= 2.0        && < 2.1
                  , hjsmin                        >= 0.1        && < 0.3
-                 , monad-control                 >= 0.3        && < 1.1
                  , wai-extra                     >= 3.0        && < 3.1
                  , yaml                          >= 0.8        && < 0.9
-                 , http-conduit                  >= 2.1        && < 2.3
-                 , directory                     >= 1.1        && < 1.4
                  , warp                          >= 3.0        && < 3.3
                  , data-default
                  , aeson                         >= 0.6        && < 1.1
-                 , conduit                       >= 1.0        && < 2.0
                  , monad-logger                  >= 0.3        && < 0.4
                  , fast-logger                   >= 2.2        && < 2.5
-                 , wai-logger                    >= 2.2        && < 2.4
                  , yesod-auth-account
                  , yesod-markdown
                  , blaze-html
                  , file-embed
                  , esqueleto
-                 , safe
-                 , unordered-containers
-                 , containers
-                 , vector
                  , time
                  , case-insensitive
                  , wai
