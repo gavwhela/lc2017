@@ -10,8 +10,6 @@ import Yesod.Auth.Dummy
 
 import Yesod.Core.Types     (Logger)
 import qualified Yesod.Core.Unsafe as Unsafe
-import qualified Data.CaseInsensitive as CI
-import qualified Data.Text.Encoding as TE
 
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
@@ -85,15 +83,6 @@ instance Yesod App where
     makeSessionBackend _ = Just <$> defaultClientSessionBackend
         120    -- timeout in minutes
         "config/client_session_key.aes"
-
-    -- Yesod Middleware allows you to run code before and after each handler function.
-    --
-    -- The defaultYesodMiddleware adds the response header "Vary:
-    -- Accept, Accept-Language" and performs authorization checks.
-    --
-    -- defaultCsrfMiddleware is chained with the yesod middleware to set a CSRF token
-    -- and validate that incoming write requests include the token.
-    yesodMiddleware = defaultYesodMiddleware . defaultCsrfMiddleware
 
     defaultLayout widget = do
         master <- getYesod

@@ -70,7 +70,6 @@ library
                  , persistent-template           >= 2.0        && < 2.7
                  , template-haskell
                  , shakespeare                   >= 2.0        && < 2.1
-                 , hjsmin                        >= 0.1        && < 0.3
                  , wai-extra                     >= 3.0        && < 3.1
                  , yaml                          >= 0.8        && < 0.9
                  , warp                          >= 3.0        && < 3.3
@@ -86,8 +85,9 @@ library
                  , time
                  , case-insensitive
                  , wai
+                 , foreign-store
 
-executable         lc2017
+executable         task
     if flag(library-only)
         Buildable: False
 
