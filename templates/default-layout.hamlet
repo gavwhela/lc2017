@@ -3,7 +3,7 @@
     <!-- Static navbar -->
     <nav .container>
       <ul .nav>
-        $forall MenuItem label route _ <- navbarFilteredMenuItems
+        $forall MenuItem label route <- menuItems
           <li .nav-item :Just route == mcurrentRoute:.nav-item-selected>
             <a href="@{route}">#{label}
 
