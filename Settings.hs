@@ -23,9 +23,7 @@ import Yesod.Default.Util          (WidgetFileSettings, widgetFileNoReload,
 -- loaded from various sources: defaults, environment variables, config files,
 -- theoretically even a database.
 data AppSettings = AppSettings
-    { appStaticDir              :: String
-    -- ^ Directory from which to serve static files.
-    , appDatabaseConf           :: PostgresConf
+    { appDatabaseConf           :: PostgresConf
     -- ^ Configuration settings for accessing the database.
     , appRoot                   :: Maybe Text
     -- ^ Base for all generated URLs. If @Nothing@, determined
@@ -44,8 +42,6 @@ data AppSettings = AppSettings
     -- ^ Should all log messages be displayed?
     , appReloadTemplates        :: Bool
     -- ^ Use the reload version of templates
-    , appMutableStatic          :: Bool
-    -- ^ Assume that files in the static dir may change after compilation
     , appSkipCombining          :: Bool
     -- ^ Perform no stylesheet/script combining
 
@@ -69,7 +65,6 @@ instance FromJSON AppSettings where
 #else
                 False
 #endif
-        appStaticDir              <- o .: "static-dir"
         appDatabaseConf           <- o .: "database"
         appRoot                   <- o .:? "approot"
         appHost                   <- fromString <$> o .: "host"
@@ -79,7 +74,6 @@ instance FromJSON AppSettings where
         appDetailedRequestLogging <- o .:? "detailed-logging" .!= defaultDev
         appShouldLogAll           <- o .:? "should-log-all"   .!= defaultDev
         appReloadTemplates        <- o .:? "reload-templates" .!= defaultDev
-        appMutableStatic          <- o .:? "mutable-static"   .!= defaultDev
         appSkipCombining          <- o .:? "skip-combining"   .!= defaultDev
 
         appCopyright              <- o .:  "copyright"
