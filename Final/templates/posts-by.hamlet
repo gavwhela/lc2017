@@ -2,7 +2,7 @@
   <h1 .post-title> #{authorName}
 <hr>
 
-<ol .post-list>
+<ol>
   $if null posts
     <p> Nothing here
   $else
