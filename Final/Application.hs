@@ -48,8 +48,6 @@ mkYesodDispatch "App" resourcesApp
 -- migrations handled by Yesod.
 makeFoundation :: AppSettings -> IO App
 makeFoundation appSettings = do
-    -- Initialize HTTP connection manager and logger
-    appHttpManager <- newManager
     appLogger <- newStdoutLoggerSet defaultBufSize >>= makeYesodLogger
 
     -- We need a log function to create a connection pool. We need a connection
