@@ -1,0 +1,20 @@
+$newline never
+$doctype 5
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="UTF-8">
+
+    <title>#{pageTitle pc}
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    ^{pageHead pc}
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js">
+
+    <script>
+      document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/,'js');
+  <body>
+    ^{pageBody pc}
