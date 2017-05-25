@@ -1,0 +1,25 @@
+<div #wrapper>
+  <header .site-header>
+    <!-- Static navbar -->
+    <nav .container>
+      <ul .nav>
+        $forall MenuItem label route <- menuItems
+          <li .nav-item :Just route == mcurrentRoute:.nav-item-selected>
+            <a href="@{route}">#{label}
+
+  <!-- Page Contents -->
+
+  <div .container>
+    $maybe msg <- mmsg
+      <div #message>#{msg}
+
+  <div .container>
+    ^{widget}
+
+<!-- Footer -->
+<footer .footer>
+  <div .container>
+    <a href=@{HomeR}>Home
+    <a href=#>&#x25B2;
+    <p>
+      #{appCopyright $ appSettings master}

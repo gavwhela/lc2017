@@ -1,0 +1,8 @@
+/auth   AuthR   Auth   getAuth
+
+/favicon.ico FaviconR GET
+/robots.txt RobotsR GET
+
+/              HomeR    GET
+/new-post      NewPostR GET POST
+/post/#PostId  PostR    GET

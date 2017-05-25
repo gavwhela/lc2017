@@ -1,0 +1,6 @@
+<header .post-header>
+  <h1 .post-title> Form
+<hr>
+<form method=post action=@{NewPostR} enctype=#{enctype}>
+  ^{formWidget}
+  <button>Submit

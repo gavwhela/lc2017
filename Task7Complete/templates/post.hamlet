@@ -1,0 +1,5 @@
+<header .post-header>
+  <h1 .post-title> #{postTitle post}
+  <p> #{postAuthor post}
+<hr>
+#{postContent post}
