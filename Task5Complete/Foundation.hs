@@ -94,6 +94,8 @@ instance Yesod App where
     isAuthorized FaviconR _ = return Authorized
     isAuthorized RobotsR _ = return Authorized
     isAuthorized HomeR _ = return Authorized
+    isAuthorized SecretR _ = isAuthenticated
+    isAuthorized SuperSecretR _ = isOwner
 
     -- What messages should be logged. The following includes all messages when
     -- in development, and warnings and errors in production.
@@ -115,6 +117,14 @@ isAuthenticated = do
     return $ case muid of
         Nothing -> AuthenticationRequired
         Just _ -> Authorized
+
+isOwner :: Handler AuthResult
+isOwner = do
+  muid <- maybeAuthId
+  return $ case muid of
+    Nothing -> AuthenticationRequired
+    Just "gavwhela@gmail.com" -> Authorized
+    Just _ -> Unauthorized "Only the owner can see this page"
 
 -- This instance is required to use forms. You can modify renderMessage to
 -- achieve customized and internationalized form validation messages.

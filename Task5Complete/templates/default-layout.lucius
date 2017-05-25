@@ -1,0 +1,180 @@
+@lightgreen: #57bb54;
+@textcolor: #494949;
+@lighttext: #ccc;
+@deletecolor: #ff574d;
+html, body {
+    height: 100%;
+}
+body {
+    color: #{textcolor};
+    margin: 0px;
+    font-size: 16px;
+}
+.container {
+    margin: 0 auto;
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+}
+a {
+    text-decoration: none;
+}
+p {
+    line-height: 1.6;
+    margin: 0 0 16px;
+}
+#wrapper {
+    height: auto;
+    min-height: 100%;
+    margin: 0px 20px -150px;
+}
+#wrapper:after {
+    content: "";
+    display: block;
+    height: 150px;
+}
+.footer {
+    color: #{lighttext};
+    background: #153015;
+    height: 150px;
+    text-align: center;
+    > .container {
+        padding: 45px 0 0 0;
+    }
+    p {
+        margin-top: 45px;
+        margin-bottom: 0px;
+    }
+    a {
+        background: #333;
+        color: #fff;
+        font-size: 20px;
+        margin: 0px 3px;
+        padding: 0px 10px;
+    }
+    a:hover {
+        background: #111;
+        color: #{lightgreen};
+    }
+}
+.site-header {
+    text-align: center;
+    text-transform: uppercase;
+}
+.post-header {
+    text-align: center;
+    text-transform: uppercase;
+    a { color: #{textcolor}; }
+    a:hover { text-decoration: underline; }
+    p { margin-bottom: 4px; }
+    .delete-post {
+        text-transform: none;
+        color: #{deletecolor};
+    }
+    .delete-post:hover {
+        cursor: pointer;
+    }
+    .edit-post {
+        text-transform: none;
+        color: #{lightgreen};
+    }
+}
+.post-title {
+    font-size: 50px;
+    font-weight: 650;
+    margin: 16px 0;
+}
+ol {
+    list-style: none;
+    padding: 0;
+    line-height: 1.4;
+    margin: 0 0 20px;
+}
+.short-post {
+    border-bottom: 1px dotted #303030;
+    margin: 0;
+    position: relative;
+    a {
+        -webkit-transition: all .2s ease-in-out;
+        -moz-transition: all .2s ease-in-out;
+        transition: all .2s ease-in-out;
+        display: block;
+        padding: 20px 5px;
+        color: #{textcolor};
+    }
+    a:hover {
+        background: #f8fcf8;
+        color: #{lightgreen};
+        padding: 20px 12px;
+    }
+}
+.nav {
+    list-style: none;
+    margin: 0px 0px 10px 0px;
+    padding: 28px 0px 0px 0px;
+}
+.nav-item {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 650;
+    margin: 0px 10px;
+    a { color: #{lightgreen}; }
+}
+.nav-item-selected { text-decoration: underline; }
+.post-comments, .comment-list {
+    margin-top: 20px;
+}
+.comment-head {
+    color: #{lighttext};
+    a { color: #{lighttext}; }
+    a:hover { text-decoration: underline; }
+}
+.comment-body p {
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+.short-post-title {
+    display: inline-block;
+    margin: 0;
+}
+.delete-comment:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+.delete-comment {
+    color: #{deletecolor};
+}
+#message {
+    text-align: center;
+    background: #ccffcc;
+    border: 1px solid #007700;
+    border-radius: 5px;
+}
+.profile-header {
+    h1 {
+        display: inline-block;
+        margin-bottom: 0;
+        margin-top: 22px;
+    }
+    a {
+        color: #{lightgreen};
+        float: right;
+        margin-top: 39px;
+    }
+}
+textarea {
+    width: 100%;
+    resize: none;
+    border-radius: 3px;
+}
+input[type="text"], input[type="password"], input[type="email"] {
+    width: 100%;
+    margin-bottom: 10px;
+}
+.loginDiv a {
+    text-decoration: none;
+    color: #{lightgreen};
+    width: 100%;
+    display: block;
+    margin-top: 5px;
+}
