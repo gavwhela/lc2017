@@ -21,6 +21,7 @@ library
                      Settings
                      Handler.Common
                      Handler.Home
+                     Handler.Post
 
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT

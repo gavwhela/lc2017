@@ -1,5 +1,3 @@
 <header .post-header>
   <h1 .post-title> Home
 <hr>
-<p><a href=@{SecretR}>Secret</a>
-<p><a href=@{SuperSecretR}>Super Secret</a>

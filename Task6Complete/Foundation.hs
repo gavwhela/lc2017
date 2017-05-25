@@ -51,6 +51,9 @@ menuItemsFor (Just _) =
       { menuItemLabel = "Home"
       , menuItemRoute = HomeR }
     , MenuItem
+      { menuItemLabel = "New Post"
+      , menuItemRoute = NewPostR }
+    , MenuItem
       { menuItemLabel = "Logout"
       , menuItemRoute = AuthR LogoutR }
     ]

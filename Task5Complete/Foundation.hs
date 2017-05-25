@@ -35,7 +35,7 @@ mkYesodData "App" $(parseRoutesFile "config/routes")
 
 -- There are better ways to do this, the full scaffolding has a
 -- callback system, but this is a bit simpler.
-menuItemsFor :: Maybe a -> [MenuItem]
+menuItemsFor :: Maybe Text -> [MenuItem]
 menuItemsFor Nothing =
     [ MenuItem
       { menuItemLabel = "Home"
@@ -43,10 +43,27 @@ menuItemsFor Nothing =
     , MenuItem
       { menuItemLabel = "Login"
       , menuItemRoute = AuthR LoginR } ]
+menuItemsFor (Just "gavwhela@gmail.com") =
+    [ MenuItem
+      { menuItemLabel = "Home"
+      , menuItemRoute = HomeR }
+    , MenuItem
+      { menuItemLabel = "Secret"
+      , menuItemRoute = SecretR }
+    , MenuItem
+      { menuItemLabel = "Super Secret"
+      , menuItemRoute = SuperSecretR }
+    , MenuItem
+      { menuItemLabel = "Logout"
+      , menuItemRoute = AuthR LogoutR }
+    ]
 menuItemsFor (Just _) =
     [ MenuItem
       { menuItemLabel = "Home"
       , menuItemRoute = HomeR }
+    , MenuItem
+      { menuItemLabel = "Secret"
+      , menuItemRoute = SecretR }
     , MenuItem
       { menuItemLabel = "Logout"
       , menuItemRoute = AuthR LogoutR }
