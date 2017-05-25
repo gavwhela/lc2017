@@ -97,6 +97,7 @@ instance Yesod App where
     isAuthorized FaviconR _ = return Authorized
     isAuthorized RobotsR _ = return Authorized
     isAuthorized HomeR _ = return Authorized
+    isAuthorized FormR _ = isAuthenticated
 
     -- What messages should be logged. The following includes all messages when
     -- in development, and warnings and errors in production.
