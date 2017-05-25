@@ -4,4 +4,4 @@
 /robots.txt RobotsR GET
 
 / HomeR GET
-/form FormR GET POST
+/new-post NewPostR GET POST

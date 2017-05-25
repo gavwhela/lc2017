@@ -1,4 +1,4 @@
 <header .post-header>
   <h1 .post-title> Home
 <hr>
-<p><a href=@{FormR}>Go to the form!</a>
+<p><a href=@{NewPostR}>Go to the new-post form!</a>

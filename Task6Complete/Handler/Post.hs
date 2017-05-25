@@ -1,4 +1,4 @@
-module Handler.Form where
+module Handler.Post where
 
 import Import
 
@@ -7,25 +7,25 @@ data Post = Post
     , postAuthor :: Text
     , postContent :: Textarea }
 
-getFormR :: Handler Html
-getFormR = do
+getNewPostR :: Handler Html
+getNewPostR = do
   user <- requireAuthId
   (formWidget, enctype) <- generateFormPost $ postForm user
   defaultLayout $ do
-        setTitle "Form"
-        $(widgetFile "form")
+        setTitle "New Post"
+        $(widgetFile "new-post")
 
-postFormR :: Handler Html
-postFormR = do
+postNewPostR :: Handler Html
+postNewPostR = do
   user <- requireAuthId
   ((res, formWidget), enctype) <- runFormPost $ postForm user
   case res of
     FormSuccess post -> defaultLayout $ do
-                          setTitle "Posted"
-                          $(widgetFile "posted")
+                          setTitle "Post"
+                          $(widgetFile "post")
     _ -> defaultLayout $ do
-              setTitle "Form"
-              $(widgetFile "form")
+              setTitle "New Post"
+              $(widgetFile "new-post")
 
 postForm :: Text -> Form Post
 postForm user = renderDivs $ Post

@@ -20,7 +20,7 @@ library
                      Settings
                      Handler.Common
                      Handler.Home
-                     Handler.Form
+                     Handler.Post
 
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT
