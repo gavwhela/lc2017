@@ -21,7 +21,8 @@ data Task = Task { taskBinOp :: Int -> Int -> Int }
 
 -- Remember dynamic path components are prefixed with a #
 mkYesod "Task" [parseRoutes|
-/      HomeR  GET
+/                HomeR  GET
+/binop/#Int/#Int BinopR GET
 |]
 
 instance Yesod Task
@@ -35,8 +36,19 @@ instance Yesod Task
 getHomeR :: Handler Html
 getHomeR = defaultLayout $ do
              setTitle "Welcome Home"
-             [whamlet|<h1>Welcome Back!|]
+             [whamlet|
+               <h1>Welcome Back!
+               <a href=@{BinopR 4 5}>Test with four and five
+             |]
+
+getBinopR :: Int -> Int -> Handler Html
+getBinopR x y = do
+  binop <- fmap taskBinOp getYesod
+  let res = binop x y
+  defaultLayout $ do
+    setTitle "Binop Page"
+    [whamlet|<p>The Result: #{res}|]
 
 -- Try changing the binary operation to -, or another numerical binop.
 main :: IO ()
-main = warp 3000 ( Task { taskBinOp = (+) } )
+main = warp 3000 ( Task { taskBinOp = (-) } )

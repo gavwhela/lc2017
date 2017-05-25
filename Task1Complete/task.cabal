@@ -1,0 +1,11 @@
+name:		task
+version:	0.0.0
+cabal-version:	>= 1.8
+build-type:	Simple
+
+executable   task
+    main-is: Task.hs
+    build-depends:
+                   base               >= 4.8.2.0 && < 4.9
+                                   || >= 4.9.1.0 && < 5
+                 , yesod              >= 1.4.3   && < 1.5
