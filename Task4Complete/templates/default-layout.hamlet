@@ -1,0 +1,18 @@
+<header>
+  <p> This header will be on every page!
+
+<div>
+  <!-- Page Contents -->
+  $maybe msg <- mmsg
+    <div>#{msg}
+
+  <div>
+    ^{widget}
+
+<!-- Footer -->
+<footer>
+  <hr>
+  <div>
+    <a href=@{HomeR}>Home
+    <p>
+      #{appCopyright $ appSettings master}
